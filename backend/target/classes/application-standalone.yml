@@ -1,0 +1,10 @@
+# Self-contained mode: embedded H2 database stored in ./data, no MySQL needed.
+spring:
+  datasource:
+    url: jdbc:h2:file:${DATA_DIR:./data}/portside;MODE=MySQL;AUTO_SERVER=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+portside:
+  attachments-dir: ${ATTACHMENTS_DIR:./data/attachments}

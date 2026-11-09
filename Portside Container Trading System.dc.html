@@ -1,0 +1,2149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/broadsheet-67ad39fe-20f3-40f1-a9cd-63801a5e4a91/styles.css">
+<script src="_ds/broadsheet-67ad39fe-20f3-40f1-a9cd-63801a5e4a91/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
+<style>
+  body { margin: 0; }
+  a { color: var(--color-accent); }
+  a:hover { color: var(--color-accent-600); }
+  .table { width: 100%; }
+  .table td.n, .table th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .rl { cursor: pointer; }
+  .rl:hover { background: color-mix(in srgb, var(--color-accent) 7%, transparent); }
+  .muted { color: color-mix(in srgb, var(--color-text) 58%, transparent); }
+  .kick { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent-700); font-weight: 600; }
+  .lbl { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 55%, transparent); font-weight: 600; }
+  .panel { background: #fff; border: 1px solid #e6e3e3; border-radius: 12px; box-shadow: 0 1px 2px rgba(10,48,62,0.04), 0 8px 22px -14px rgba(10,48,62,0.18); }
+  .btn { border-radius: 9px !important; }
+  .input, select.input { border-radius: 8px; }
+  .tag { border-radius: 999px; }
+  .kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; padding: 1px 5px; border-radius: 5px; border: 1px solid currentColor; font-size: 10.5px; line-height: 1.5; opacity: 0.8; font-variant-numeric: tabular-nums; }
+  .navi { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 9px; cursor: pointer; font-size: 13.5px; line-height: 1.3; color: #cfe6ef; }
+  .navi:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .navi.on { background: linear-gradient(90deg, rgba(56,166,207,0.32), rgba(56,166,207,0.12)); color: #fff; font-weight: 600; box-shadow: inset 2px 0 0 var(--color-accent-400); }
+  .navi i { font-size: 18px; flex: none; }
+  .grp { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; cursor: pointer; font-size: 10px; letter-spacing: 0.11em; text-transform: uppercase; color: #7fa9ba; font-weight: 600; }
+  .grp:hover { color: #cfe6ef; }
+  .tick { font-size: 10.5px; fill: #9b9797; font-family: var(--font-body); }
+</style>
+</helmet>
+<div style="display:flex;align-items:flex-start;min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)">
+
+  <aside style="width:{{ railW }};flex:none;padding:16px 10px 28px;position:sticky;top:0;height:100vh;overflow-y:auto;box-sizing:border-box;background:linear-gradient(180deg,#0b3a4b 0%,#0a303e 55%,#082734 100%);color:#eaf6fb">
+    <div style="display:flex;align-items:center;gap:10px;padding:4px 8px 18px">
+      <div style="width:32px;height:32px;flex:none;background:linear-gradient(135deg,#0088b0,#d6006c);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-heading);font-weight:600;font-size:16px;border-radius:10px">P</div>
+      <div onClick="{{ goHome }}" class="rl" style="min-width:0;display:{{ labelDisplay }}">
+        <div style="font-family:var(--font-heading);font-weight:600;font-size:17px;line-height:1.1;color:#fff">Portside</div>
+        <div style="font-size:9.5px;letter-spacing:0.09em;text-transform:uppercase;color:#7fa9ba">Trading ERP</div>
+      </div>
+    </div>
+
+    <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="6">
+      <div style="margin-bottom:6px">
+        <div class="grp" onClick="{{ g.toggle }}" style="display:{{ labelDisplay }}">
+          <span>{{ g.name }}</span>
+          <i class="{{ g.chev }}"></i>
+        </div>
+        <div style="display:{{ g.bodyDisplay }};flex-direction:column;gap:2px">
+          <sc-for list="{{ g.items }}" as="n" hint-placeholder-count="4">
+            <div onClick="{{ n.go }}" class="{{ n.cls }}" role="button" tabindex="0" title="{{ n.label }}">
+              <i class="{{ n.icon }}" style="color:{{ n.color }}"></i>
+              <span style="display:{{ n.labelDisplay }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ n.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+
+    <div onClick="{{ toggleRail }}" class="navi" style="margin-top:18px;color:#7fa9ba">
+      <i class="{{ railIcon }}"></i>
+      <span style="display:{{ labelDisplay }}">Collapse menu</span>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;background:var(--color-bg)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:14px 30px;background:#fff;border-bottom:1px solid var(--color-neutral-300);position:sticky;top:0;z-index:5">
+      <div style="display:flex;align-items:center;gap:14px;min-width:0">
+        <i class="ph-duotone ph-shipping-container" style="font-size:22px;color:#1186ac"></i>
+        <div style="min-width:0">
+          <div style="font-family:var(--font-heading);font-weight:600;font-size:16px;line-height:1.2">{{ crumbTitle }}</div>
+          <div class="muted" style="font-size:11.5px">Karachi &middot; 14 Sep 2026 &middot; FY 2026&ndash;27 &middot; all figures PKR</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:7px;padding:5px 10px;background:var(--color-neutral-100);border:1px solid var(--color-neutral-300);border-radius:3px">
+          <i class="ph-duotone ph-user-circle" style="font-size:17px;color:#6d5bd0"></i>
+          <select class="input" style="width:auto;padding:1px 4px;font-size:13px;border:none;background:transparent" value="{{ role }}" onChange="{{ setRole }}">
+            <sc-for list="{{ roles }}" as="r" hint-placeholder-count="3"><option value="{{ r }}">{{ r }}</option></sc-for>
+          </select>
+        </div>
+        <button class="btn btn-secondary" onClick="{{ openHelp }}" style="display:flex;align-items:center;gap:7px"><i class="ph-duotone ph-keyboard" style="color:var(--color-accent-2)"></i>Shortcuts<span class="kbd">?</span></button>
+        <button class="btn btn-primary" onClick="{{ startInvoice }}" style="display:flex;align-items:center;gap:7px"><i class="ph-duotone ph-receipt"></i>New invoice<span class="kbd">n</span></button>
+      </div>
+    </div>
+
+    <div style="padding:24px 30px 90px">
+    <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+      <div class="panel" style="display:flex;gap:10px;align-items:flex-start;border-left:3px solid var(--color-accent-2);padding:10px 14px;margin-bottom:20px;font-size:13.5px">
+        <i class="ph-duotone ph-check-circle" style="font-size:18px;color:var(--color-accent-2)"></i>
+        <span>{{ toast }}</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:14px;margin-bottom:18px">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+            <div onClick="{{ k.go }}" class="panel rl" style="padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+              <div style="width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ k.tint }};border-radius:11px">
+                <i class="{{ k.icon }}" style="font-size:20px;color:{{ k.ink }}"></i>
+              </div>
+              <div style="min-width:0">
+                <div class="lbl" style="margin-bottom:3px">{{ k.label }}</div>
+                <div style="font-family:var(--font-heading);font-weight:600;font-size:23px;line-height:1.15;font-variant-numeric:tabular-nums">{{ k.value }}</div>
+                <div class="muted" style="font-size:11.5px">{{ k.sub }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;margin-bottom:14px">
+          <div class="panel" style="padding:16px 18px 10px;grid-column:span 2;min-width:0">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:4px">
+              <div>
+                <div style="font-family:var(--font-heading);font-weight:600;font-size:15px">Sales, cost and gross profit by month</div>
+                <div class="muted" style="font-size:11.5px">Net of discount, before sales tax &middot; PKR millions</div>
+              </div>
+              <div style="display:flex;gap:14px;font-size:11.5px">
+                <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:var(--color-accent);display:inline-block"></span>Net sales</span>
+                <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:var(--color-neutral-400);display:inline-block"></span>Cost of goods</span>
+                <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:2px;background:var(--color-accent-2);display:inline-block"></span>Gross profit</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 640 250" style="width:100%;height:250px;overflow:visible">
+              <sc-for list="{{ chart.grid }}" as="g" hint-placeholder-count="5">
+                <g>
+                  <line x1="46" y1="{{ g.y }}" x2="630" y2="{{ g.y }}" stroke="#e3e0e0" stroke-width="1"></line>
+                  <text x="40" y="{{ g.ty }}" text-anchor="end" class="tick">{{ g.label }}</text>
+                </g>
+              </sc-for>
+              <sc-for list="{{ chart.bars }}" as="b" hint-placeholder-count="6">
+                <g>
+                  <rect x="{{ b.x1 }}" y="{{ b.y1 }}" width="{{ b.w }}" height="{{ b.h1 }}" fill="#0088b0"></rect>
+                  <rect x="{{ b.x2 }}" y="{{ b.y2 }}" width="{{ b.w }}" height="{{ b.h2 }}" fill="#bab6b6"></rect>
+                  <text x="{{ b.cx }}" y="238" text-anchor="middle" class="tick">{{ b.label }}</text>
+                  <text x="{{ b.cx }}" y="{{ b.vy }}" text-anchor="middle" class="tick" fill="#605d5d">{{ b.value }}</text>
+                </g>
+              </sc-for>
+              <polyline points="{{ chart.gpLine }}" fill="none" stroke="#d6006c" stroke-width="2"></polyline>
+              <sc-for list="{{ chart.dots }}" as="d" hint-placeholder-count="6">
+                <circle cx="{{ d.x }}" cy="{{ d.y }}" r="3.5" fill="#fff" stroke="#d6006c" stroke-width="2"></circle>
+              </sc-for>
+            </svg>
+          </div>
+
+          <div class="panel" style="padding:16px 18px;min-width:0">
+            <div style="font-family:var(--font-heading);font-weight:600;font-size:15px">Inventory by container lot</div>
+            <div class="muted" style="font-size:11.5px;margin-bottom:6px">Stock value on hand at landed cost</div>
+            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+              <svg viewBox="0 0 170 170" style="width:150px;height:150px;flex:none">
+                <sc-for list="{{ donut.arcs }}" as="a" hint-placeholder-count="3">
+                  <circle cx="85" cy="85" r="58" fill="none" stroke="{{ a.color }}" stroke-width="24" stroke-dasharray="{{ a.dash }}" stroke-dashoffset="{{ a.offset }}" transform="rotate(-90 85 85)"></circle>
+                </sc-for>
+                <text x="85" y="80" text-anchor="middle" style="font-family:var(--font-heading);font-weight:600;font-size:19px;fill:#201e1d">{{ donut.total }}</text>
+                <text x="85" y="97" text-anchor="middle" class="tick">on hand</text>
+              </svg>
+              <div style="display:flex;flex-direction:column;gap:8px;min-width:120px">
+                <sc-for list="{{ donut.legend }}" as="l" hint-placeholder-count="3">
+                  <div onClick="{{ l.go }}" class="rl" style="display:flex;align-items:baseline;gap:8px;font-size:12.5px">
+                    <span style="width:9px;height:9px;flex:none;background:{{ l.color }};display:inline-block"></span>
+                    <span style="flex:1">{{ l.label }}</span>
+                    <span style="font-variant-numeric:tabular-nums">{{ l.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px">
+          <div class="panel" style="padding:16px 18px;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+              <i class="ph-duotone ph-chart-bar" style="font-size:18px;color:#a80055"></i>
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:15px">Gross profit by container</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <sc-for list="{{ profitBars }}" as="b" hint-placeholder-count="4">
+                <div onClick="{{ b.go }}" class="rl" style="padding:2px 0">
+                  <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span>{{ b.id }} &middot; {{ b.margin }} margin</span><span style="font-variant-numeric:tabular-nums;font-weight:600">{{ b.gp }}</span></div>
+                  <div style="height:8px;background:var(--color-neutral-200);border-radius:2px"><div style="height:8px;width:{{ b.pct }}%;background:var(--color-accent-2);border-radius:2px"></div></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--color-neutral-200)">
+              <div class="lbl" style="margin-bottom:10px">Receivables aging</div>
+              <div style="display:flex;align-items:flex-end;gap:10px;height:96px">
+                <sc-for list="{{ aging }}" as="a" hint-placeholder-count="4">
+                  <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;height:100%">
+                    <div class="muted" style="font-size:10.5px;text-align:center;font-variant-numeric:tabular-nums">{{ a.value }}</div>
+                    <div style="height:{{ a.h }}px;background:{{ a.color }};border-radius:2px 2px 0 0"></div>
+                    <div class="muted" style="font-size:10.5px;text-align:center">{{ a.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" style="padding:16px 18px;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+              <i class="ph-duotone ph-boat" style="font-size:18px;color:#c27803"></i>
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:15px">Import pipeline</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <sc-for list="{{ pipeline }}" as="p" hint-placeholder-count="5">
+                <div onClick="{{ p.go }}" class="rl" style="display:flex;align-items:center;gap:12px;padding:7px 4px;border-bottom:1px solid var(--color-neutral-200)">
+                  <i class="{{ p.icon }}" style="font-size:19px;color:{{ p.color }};flex:none"></i>
+                  <div style="min-width:0;flex:1">
+                    <div style="font-size:13px;font-weight:600">{{ p.id }} &middot; {{ p.supplier }}</div>
+                    <div class="muted" style="font-size:11.5px">{{ p.meta }}</div>
+                  </div>
+                  <span class="tag {{ p.tagClass }}" style="flex:none">{{ p.status }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div class="panel" style="padding:16px 18px;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+              <i class="ph-duotone ph-warning-circle" style="font-size:18px;color:var(--color-accent-2)"></i>
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:15px">Attention required</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+                <div onClick="{{ a.go }}" class="rl" style="display:flex;gap:10px;align-items:flex-start">
+                  <i class="{{ a.icon }}" style="font-size:17px;color:{{ a.color }};flex:none"></i>
+                  <div>
+                    <div style="font-size:13px;line-height:1.35">{{ a.title }}</div>
+                    <div class="muted" style="font-size:11.5px">{{ a.detail }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:18px">
+          <div style="min-width:0">
+            <div class="kick" style="margin-bottom:4px">{{ listKicker }}</div>
+            <h2 style="margin:0 0 6px;font-size:26px">{{ listTitle }}</h2>
+            <p class="muted" style="font-size:13.5px;max-width:56em;margin:0">{{ listBlurb }}</p>
+          </div>
+          <sc-if value="{{ newShow }}" hint-placeholder-val="{{ false }}">
+            <button class="btn btn-primary" onClick="{{ newGo }}" style="display:flex;align-items:center;gap:7px;flex:none">
+              <i class="ph-duotone ph-plus-circle"></i>{{ newLabel }}<span class="kbd">/</span>
+            </button>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ hasTotals }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px">
+            <sc-for list="{{ totals }}" as="t" hint-placeholder-count="3">
+              <div class="panel" style="padding:12px 14px">
+                <div class="lbl" style="margin-bottom:3px">{{ t.label }}</div>
+                <div style="font-family:var(--font-heading);font-weight:600;font-size:20px;font-variant-numeric:tabular-nums">{{ t.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+            <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+              <button class="btn {{ f.cls }}" style="padding:4px 11px;font-size:12.5px" onClick="{{ f.go }}">{{ f.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div class="panel" style="overflow-x:auto;padding:2px 14px 10px">
+          <table class="table">
+            <thead><tr>
+              <sc-for list="{{ cols }}" as="c" hint-placeholder-count="6"><th class="{{ c.cls }}">{{ c.label }}</th></sc-for>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+                <tr class="{{ r.cls }}" onClick="{{ r.go }}">
+                  <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="6">
+                    <td class="{{ c.cls }}">
+                      <sc-if value="{{ c.tag }}" hint-placeholder-val="{{ false }}"><span class="tag {{ c.tag }}">{{ c.v }}</span></sc-if>
+                      <sc-if value="{{ c.plain }}" hint-placeholder-val="{{ true }}"><span style="font-weight:{{ c.weight }};font-family:{{ c.font }}">{{ c.v }}</span></sc-if>
+                      <sc-if value="{{ c.sub }}" hint-placeholder-val="{{ false }}"><div class="muted" style="font-size:12px">{{ c.sub }}</div></sc-if>
+                      <sc-if value="{{ c.action }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" style="padding:3px 10px;font-size:12px" onClick="{{ c.action }}">{{ c.actionLabel }}</button></sc-if>
+                      <div style="display:flex;gap:6px;justify-content:flex-end">
+                        <sc-for list="{{ c.actions }}" as="a" hint-placeholder-count="0">
+                          <button class="btn {{ a.cls }}" style="padding:3px 9px;font-size:11.5px" onClick="{{ a.fn }}">{{ a.label }}</button>
+                        </sc-for>
+                      </div>
+                    </td>
+                  </sc-for>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <sc-if value="{{ listNote }}" hint-placeholder-val="{{ false }}">
+          <p class="muted" style="font-size:12.5px;max-width:60em;margin-top:16px">{{ listNote }}</p>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isContainer }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div onClick="{{ goContainers }}" class="rl kick" style="margin-bottom:4px">&larr; Container register</div>
+        <h2 style="margin:0 0 6px;font-size:26px">{{ cd.id }}</h2>
+        <p class="muted" style="font-size:13px;margin:0 0 18px">{{ cd.line }}</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px">
+          <sc-for list="{{ cd.stats }}" as="s" hint-placeholder-count="5">
+            <div class="panel" style="padding:12px 14px">
+              <div class="lbl" style="margin-bottom:3px">{{ s.label }}</div>
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:20px;font-variant-numeric:tabular-nums">{{ s.value }}</div>
+              <div class="muted" style="font-size:11.5px">{{ s.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;margin-bottom:14px">
+          <div class="panel" style="padding:16px 18px;min-width:0;overflow-x:auto">
+            <div style="font-family:var(--font-heading);font-weight:600;font-size:15px">Landed cost worksheet</div>
+            <p class="muted" style="font-size:12px;margin:2px 0 12px">Allocation basis drives how each expense head spreads over the lot&rsquo;s items.</p>
+            <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+              <sc-for list="{{ cd.basisOpts }}" as="b" hint-placeholder-count="3">
+                <button class="btn {{ b.cls }}" style="padding:5px 12px;font-size:13px" onClick="{{ b.go }}">{{ b.label }}</button>
+              </sc-for>
+              <span class="muted" style="font-size:12px;align-self:center">cycle with <span class="kbd">b</span></span>
+            </div>
+            <table class="table">
+              <thead><tr><th>Expense head</th><th>Allocation basis</th><th class="n">Amount PKR</th><th class="n">Per unit</th><th></th></tr></thead>
+              <tbody>
+                <sc-for list="{{ cd.costs }}" as="x" hint-placeholder-count="7">
+                  <tr>
+                    <td><input class="input" style="min-width:150px;padding:4px 7px;font-size:12.5px" value="{{ x.head }}" onChange="{{ x.setHead }}"></td>
+                    <td>
+                      <select class="input" style="padding:4px 6px;font-size:12.5px" value="{{ x.basisCode }}" onChange="{{ x.setBasis }}">
+                        <sc-for list="{{ cd.basisCells }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+                      </select>
+                      <div class="muted" style="font-size:11.5px">{{ x.basis }}</div>
+                    </td>
+                    <td class="n"><input class="input" style="width:112px;padding:4px 7px;text-align:right" value="{{ x.amountRaw }}" onChange="{{ x.setAmount }}"></td>
+                    <td class="n">{{ x.per }}</td>
+                    <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:11.5px" onClick="{{ x.remove }}">Remove</button></td>
+                  </tr>
+                </sc-for>
+                <tr><td style="font-weight:600">Total landed cost</td><td></td><td class="n" style="font-weight:600">{{ cd.costTotal }}</td><td class="n" style="font-weight:600">{{ cd.costPer }}</td><td></td></tr>
+              </tbody>
+            </table>
+            <sc-if value="{{ cd.canEditCost }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+                <button class="btn btn-secondary" style="padding:4px 11px;font-size:12.5px;display:flex;align-items:center;gap:7px" onClick="{{ cd.addCost }}"><i class="ph-duotone ph-plus-circle"></i>Add expense head<span class="kbd">c</span></button>
+                <span class="muted" style="font-size:12px;align-self:center">Edits re-spread instantly across unit costs, stock value and lot profit.</span>
+              </div>
+            </sc-if>
+          </div>
+          <div class="panel" style="padding:16px 18px;min-width:0;overflow-x:auto">
+            <div style="font-family:var(--font-heading);font-weight:600;font-size:15px">Lot items &amp; unit costing</div>
+            <p class="muted" style="font-size:12px;margin:2px 0 12px">Costs re-spread live when the basis changes; sold units keep the basis frozen at invoice time.</p>
+            <table class="table">
+              <thead><tr><th>Item</th><th class="n">Qty recd</th><th class="n">FOB USD</th><th class="n">Weight kg</th><th class="n">Sold</th><th class="n">On hand</th><th class="n">Unit cost</th><th class="n">Stock value</th><th></th></tr></thead>
+              <tbody>
+                <sc-for list="{{ cd.items }}" as="i" hint-placeholder-count="5">
+                  <tr>
+                    <td>{{ i.name }}<div class="muted" style="font-size:12px">{{ i.code }}</div></td>
+                    <td class="n"><input class="input" style="width:78px;padding:4px 7px;text-align:right" value="{{ i.qtyRaw }}" onChange="{{ i.setQty }}"></td>
+                    <td class="n"><input class="input" style="width:76px;padding:4px 7px;text-align:right" value="{{ i.fobRaw }}" onChange="{{ i.setFob }}"></td>
+                    <td class="n"><input class="input" style="width:78px;padding:4px 7px;text-align:right" value="{{ i.wtRaw }}" onChange="{{ i.setWt }}"></td>
+                    <td class="n muted">{{ i.sold }}</td>
+                    <td class="n">{{ i.onHand }}</td>
+                    <td class="n">{{ i.unit }}</td>
+                    <td class="n">{{ i.value }}</td>
+                    <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:11.5px" onClick="{{ i.remove }}">Remove</button></td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+            <sc-if value="{{ cd.canEditCost }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+                <button class="btn btn-primary" style="padding:4px 11px;font-size:12.5px;display:flex;align-items:center;gap:7px" onClick="{{ cd.addItem }}"><i class="ph-duotone ph-magnifying-glass"></i>Add item from master<span class="kbd">i</span></button>
+                <span class="muted" style="font-size:12px;align-self:center">Search the item master, then set quantity, FOB price and weight on the line.</span>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px">
+          <div class="panel" style="padding:16px 18px;min-width:0;overflow-x:auto">
+            <div style="font-family:var(--font-heading);font-weight:600;font-size:15px;margin-bottom:10px">Container P&amp;L to date</div>
+            <table class="table">
+              <tbody>
+                <sc-for list="{{ cd.pl }}" as="p" hint-placeholder-count="6">
+                  <tr><td style="font-weight:{{ p.weight }}">{{ p.label }}<div class="muted" style="font-size:12px">{{ p.sub }}</div></td><td class="n" style="font-weight:{{ p.weight }}">{{ p.value }}</td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel" style="padding:16px 18px;min-width:0">
+            <div style="font-family:var(--font-heading);font-weight:600;font-size:15px;margin-bottom:12px">Document trail</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ cd.trail }}" as="t" hint-placeholder-count="6">
+                <div style="display:flex;gap:12px;align-items:flex-start">
+                  <i class="ph-duotone ph-file-text" style="font-size:17px;color:#6d5bd0;flex:none"></i>
+                  <div class="muted" style="font-size:11.5px;width:72px;flex:none">{{ t.date }}</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px">{{ t.what }}</div>
+                    <div class="muted" style="font-size:11.5px">{{ t.who }}</div>
+                  </div>
+                  <span class="tag tag-outline">{{ t.ref }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isInvoice }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div onClick="{{ goSales }}" class="rl kick" style="margin-bottom:4px">&larr; Sales invoices</div>
+        <h2 style="margin:0 0 6px;font-size:26px">Sales invoice {{ inv.no }}</h2>
+        <p class="muted" style="font-size:13px;max-width:56em;margin:0 0 18px">Lot-level stock picking, customer price list with floor checks, and live gross profit before you post.</p>
+
+        <div class="panel" style="padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:14px">
+          <div class="field">
+            <label>Customer</label>
+            <select class="input" value="{{ inv.customerId }}" onChange="{{ inv.setCustomer }}">
+              <sc-for list="{{ customerOpts }}" as="c" hint-placeholder-count="5"><option value="{{ c.id }}">{{ c.name }}</option></sc-for>
+            </select>
+          </div>
+          <div class="field"><label>Date</label><input class="input" value="14 Sep 2026" readonly="readonly"></div>
+          <div class="field"><label>Payment terms</label><input class="input" value="{{ inv.terms }}" readonly="readonly"></div>
+          <div class="field"><label>Credit position</label><input class="input" value="{{ inv.credit }}" readonly="readonly"></div>
+        </div>
+
+        <div class="panel" style="overflow-x:auto;padding:14px 16px">
+          <div style="font-family:var(--font-heading);font-weight:600;font-size:15px;margin-bottom:8px">Line items</div>
+          <table class="table">
+            <thead><tr><th>Item</th><th>Container lot</th><th class="n">Qty</th><th class="n">Rate</th><th class="n">Unit cost</th><th class="n">Line total</th><th class="n">GP</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ inv.lines }}" as="l" hint-placeholder-count="2">
+                <tr>
+                  <td>{{ l.name }}<div class="muted" style="font-size:12px">{{ l.code }} &middot; floor {{ l.floor }}</div></td>
+                  <td>{{ l.lot }}<div class="muted" style="font-size:12px">{{ l.avail }} available</div></td>
+                  <td class="n"><input class="input" style="width:74px;padding:4px 7px;text-align:right" value="{{ l.qty }}" onChange="{{ l.setQty }}"></td>
+                  <td class="n"><input class="input" style="width:92px;padding:4px 7px;text-align:right" value="{{ l.rate }}" onChange="{{ l.setRate }}"></td>
+                  <td class="n muted">{{ l.cost }}</td>
+                  <td class="n">{{ l.total }}</td>
+                  <td class="n" style="color:{{ l.gpColor }}">{{ l.gp }}<div style="font-size:12px">{{ l.gpPct }}</div></td>
+                  <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:12px" onClick="{{ l.remove }}">Remove</button></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-top:14px;padding:14px 16px">
+          <button class="btn btn-primary" onClick="{{ openPalette }}" style="display:flex;align-items:center;gap:8px">
+            <i class="ph-duotone ph-magnifying-glass"></i>Search items to add
+            <span style="font-size:11px;opacity:0.8;border:1px solid currentColor;border-radius:2px;padding:0 4px">F2</span>
+          </button>
+          <div class="field" style="margin:0">
+            <label>Or pick from the list</label>
+            <select class="input" style="min-width:250px" value="{{ inv.pick }}" onChange="{{ inv.setPick }}">
+              <sc-for list="{{ inv.pickOpts }}" as="p" hint-placeholder-count="6"><option value="{{ p.id }}">{{ p.label }}</option></sc-for>
+            </select>
+          </div>
+          <button class="btn btn-secondary" onClick="{{ inv.addLine }}">Add line</button>
+          <div class="muted" style="display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;margin-left:auto">
+            <span><b>F2</b> / <b>a</b> search items</span><span><b>d</b> save draft</span><span><b>p</b> or <b>&#8984;&crarr;</b> post</span><span><b>Esc</b> close</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <div class="panel" style="padding:14px 16px;min-width:0">
+            <table class="table">
+              <tbody>
+                <sc-for list="{{ inv.totals }}" as="t" hint-placeholder-count="6">
+                  <tr><td style="font-weight:{{ t.weight }}">{{ t.label }}</td><td class="n" style="font-weight:{{ t.weight }};color:{{ t.color }}">{{ t.value }}</td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel" style="padding:14px 16px;min-width:0">
+            <sc-if value="{{ inv.warning }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:9px;border-left:3px solid var(--color-accent-2);padding:8px 12px;font-size:13px;margin-bottom:14px;background:var(--color-accent-2-100)">
+                <i class="ph-duotone ph-seal-warning" style="font-size:17px;color:var(--color-accent-2);flex:none"></i>
+                <span>{{ inv.warning }}</span>
+              </div>
+            </sc-if>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn btn-primary" onClick="{{ inv.post }}" style="display:flex;align-items:center;gap:7px"><i class="ph-duotone ph-check-square"></i>{{ inv.postLabel }}</button>
+              <button class="btn btn-secondary" onClick="{{ saveDraft }}" style="display:flex;align-items:center;gap:7px"><i class="ph-duotone ph-floppy-disk"></i>Save draft</button>
+              <button class="btn btn-ghost" onClick="{{ goSales }}">Discard</button>
+            </div>
+            <p class="muted" style="font-size:12.5px;margin:14px 0 0">Posting writes the stock issue, the customer receivable and the double-entry batch in one transaction. {{ inv.postNote }}</p>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPO }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div onClick="{{ goPurchases }}" class="rl kick" style="margin-bottom:4px">&larr; Purchase orders</div>
+        <h2 style="margin:0 0 6px;font-size:26px">Purchase order {{ po.no }}</h2>
+        <p class="muted" style="font-size:13px;max-width:56em;margin:0 0 18px">Order on a supplier in USD at FOB prices. Receiving it later creates the container lot and its opening landed-cost worksheet.</p>
+
+        <div class="panel" style="padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:14px">
+          <div class="field" style="margin:0"><label>PO number</label><input class="input" value="{{ po.no }}" onChange="{{ po.setId }}"></div>
+          <div class="field" style="margin:0">
+            <label>Supplier</label>
+            <select class="input" value="{{ po.sup }}" onChange="{{ po.setSup }}">
+              <sc-for list="{{ po.supOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+            </select>
+          </div>
+          <div class="field" style="margin:0"><label>Order date</label><input class="input" value="{{ po.date }}" onChange="{{ po.setDate }}"></div>
+          <div class="field" style="margin:0"><label>Incoterm &amp; port</label><input class="input" value="{{ po.incoterm }}" onChange="{{ po.setIncoterm }}"></div>
+          <div class="field" style="margin:0">
+            <label>Payment terms</label>
+            <select class="input" value="{{ po.terms }}" onChange="{{ po.setTerms }}">
+              <sc-for list="{{ po.termOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+            </select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Status</label>
+            <select class="input" value="{{ po.status }}" onChange="{{ po.setStatus }}">
+              <sc-for list="{{ po.statusOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel" style="overflow-x:auto;padding:14px 16px">
+          <div style="font-family:var(--font-heading);font-weight:600;font-size:15px;margin-bottom:8px">Order lines</div>
+          <table class="table">
+            <thead><tr><th>Item</th><th class="n">Qty</th><th class="n">FOB USD</th><th class="n">Line USD</th><th class="n">Line PKR</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ po.lines }}" as="l" hint-placeholder-count="2">
+                <tr>
+                  <td>{{ l.name }}<div class="muted" style="font-size:12px">{{ l.code }}</div></td>
+                  <td class="n"><input class="input" style="width:84px;padding:4px 7px;text-align:right" value="{{ l.qty }}" onChange="{{ l.setQty }}"></td>
+                  <td class="n"><input class="input" style="width:90px;padding:4px 7px;text-align:right" value="{{ l.price }}" onChange="{{ l.setPrice }}"></td>
+                  <td class="n muted">{{ l.usd }}</td>
+                  <td class="n">{{ l.pkr }}</td>
+                  <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:12px" onClick="{{ l.remove }}">Remove</button></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px;padding:14px 16px">
+          <button class="btn btn-primary" onClick="{{ po.openPalette }}" style="display:flex;align-items:center;gap:8px"><i class="ph-duotone ph-magnifying-glass"></i>Search items<span class="kbd">F2</span></button>
+          <button class="btn btn-secondary" onClick="{{ po.save }}" style="display:flex;align-items:center;gap:7px"><i class="ph-duotone ph-floppy-disk"></i>Save order<span class="kbd">s</span></button>
+          <button class="btn btn-ghost" onClick="{{ goPurchases }}">Discard<span class="kbd" style="margin-left:7px">Esc</span></button>
+          <div style="margin-left:auto;display:flex;gap:22px;flex-wrap:wrap">
+            <div><div class="lbl">Units</div><div style="font-family:var(--font-heading);font-weight:600;font-variant-numeric:tabular-nums">{{ po.qty }}</div></div>
+            <div><div class="lbl">FOB value</div><div style="font-family:var(--font-heading);font-weight:600;font-variant-numeric:tabular-nums">{{ po.usd }}</div></div>
+            <div><div class="lbl">In PKR</div><div style="font-family:var(--font-heading);font-weight:600;font-variant-numeric:tabular-nums">{{ po.pkr }}</div></div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStockEntry }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div onClick="{{ goStockEntries }}" class="rl kick" style="margin-bottom:4px">&larr; Stock entry register</div>
+        <h2 style="margin:0 0 6px;font-size:26px">Stock entry {{ se.no }}</h2>
+        <p class="muted" style="font-size:13px;max-width:56em;margin:0 0 18px">Signed quantities against a container lot: positive receives stock in, negative writes it off. Valuation uses that lot&rsquo;s landed unit cost. {{ se.lotNote }}</p>
+
+        <div class="panel" style="padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:14px">
+          <div class="field" style="margin:0">
+            <label>Entry type</label>
+            <select class="input" value="{{ se.type }}" onChange="{{ se.setType }}">
+              <sc-for list="{{ se.typeOpts }}" as="t" hint-placeholder-count="4"><option value="{{ t.v }}">{{ t.label }}</option></sc-for>
+            </select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Container lot</label>
+            <select class="input" value="{{ se.lot }}" onChange="{{ se.setLot }}">
+              <sc-for list="{{ se.lotOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+            </select>
+          </div>
+          <div class="field" style="margin:0"><label>Net quantity</label><input class="input" value="{{ se.qty }}" readonly="readonly"></div>
+          <div class="field" style="margin:0"><label>Value impact PKR</label><input class="input" value="{{ se.value }}" readonly="readonly"></div>
+        </div>
+
+        <div class="panel" style="overflow-x:auto;padding:14px 16px">
+          <div style="font-family:var(--font-heading);font-weight:600;font-size:15px;margin-bottom:8px">Entry lines</div>
+          <table class="table">
+            <thead><tr><th>Item</th><th>Container lot</th><th class="n">Balance now</th><th class="n">Signed qty</th><th>Reason</th><th class="n">Unit cost</th><th class="n">Value impact</th><th class="n">New balance</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ se.lines }}" as="l" hint-placeholder-count="2">
+                <tr>
+                  <td>{{ l.name }}<div class="muted" style="font-size:12px">{{ l.code }}</div></td>
+                  <td>{{ l.lot }}</td>
+                  <td class="n muted">{{ l.bal }}</td>
+                  <td class="n"><input class="input" style="width:86px;padding:4px 7px;text-align:right" value="{{ l.qty }}" onChange="{{ l.setQty }}"></td>
+                  <td><input class="input" style="min-width:180px;padding:4px 7px;font-size:12.5px" value="{{ l.reason }}" onChange="{{ l.setReason }}"></td>
+                  <td class="n muted">{{ l.cost }}</td>
+                  <td class="n" style="color:{{ l.color }}">{{ l.impact }}</td>
+                  <td class="n">{{ l.newBal }}</td>
+                  <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:12px" onClick="{{ l.remove }}">Remove</button></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px;padding:14px 16px">
+          <button class="btn btn-primary" onClick="{{ se.openPalette }}" style="display:flex;align-items:center;gap:8px">
+            <i class="ph-duotone ph-magnifying-glass"></i>Search stock to add
+            <span style="font-size:11px;opacity:0.8;border:1px solid currentColor;border-radius:2px;padding:0 4px">F2</span>
+          </button>
+          <button class="btn btn-secondary" onClick="{{ se.post }}" style="display:flex;align-items:center;gap:7px"><i class="ph-duotone ph-check-square"></i>Post entry
+            <span style="font-size:11px;opacity:0.8;border:1px solid currentColor;border-radius:2px;padding:0 4px">p</span>
+          </button>
+          <button class="btn btn-ghost" onClick="{{ goStockEntries }}">Discard</button>
+          <p class="muted" style="font-size:12.5px;margin:0;max-width:34em">Posting updates on-hand balances, lot valuation, the dashboard donut and the inventory ledger in one step.</p>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div class="kick" style="margin-bottom:4px">Reporting &middot; Module 62</div>
+        <h2 style="margin:0 0 6px;font-size:26px">Report catalogue</h2>
+        <p class="muted" style="font-size:13.5px;max-width:56em;margin:0 0 18px">Every report is filterable by date, container, item, customer and salesman, and exports to Excel and PDF.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+          <sc-for list="{{ reportGroups }}" as="g" hint-placeholder-count="5">
+            <div class="panel" style="padding:16px 18px;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                <i class="{{ g.icon }}" style="font-size:18px;color:{{ g.iconColor }}"></i>
+                <div style="font-family:var(--font-heading);font-weight:600;font-size:15px">{{ g.name }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:1px">
+                <sc-for list="{{ g.items }}" as="r" hint-placeholder-count="5">
+                  <div onClick="{{ r.go }}" class="rl" style="font-size:13px;display:flex;justify-content:space-between;gap:12px;padding:5px 4px">
+                    <span>{{ r.name }}</span>
+                    <span class="muted" style="font-size:11.5px;white-space:nowrap">{{ r.note }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    </div>
+
+    <sc-if value="{{ hasModal }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed;inset:0;background:rgba(10,48,62,0.45);display:flex;align-items:flex-start;justify-content:center;padding:60px 20px;z-index:40;overflow-y:auto">
+        <div class="panel" style="width:min(660px,100%);padding:20px 22px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px">
+            <div>
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:18px">{{ modal.title }}</div>
+              <div class="muted" style="font-size:12px">{{ modal.sub }}</div>
+            </div>
+            <button class="btn btn-ghost" style="padding:2px 8px" onClick="{{ modal.cancel }}"><i class="ph-duotone ph-x"></i></button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px">
+            <sc-for list="{{ modal.fields }}" as="fd" hint-placeholder-count="6">
+              <div class="field" style="margin:0">
+                <label>{{ fd.label }}</label>
+                <sc-if value="{{ fd.isSelect }}" hint-placeholder-val="{{ false }}">
+                  <select class="input" value="{{ fd.value }}" onChange="{{ fd.set }}">
+                    <sc-for list="{{ fd.options }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+                  </select>
+                </sc-if>
+                <sc-if value="{{ fd.isText }}" hint-placeholder-val="{{ true }}">
+                  <input class="input" value="{{ fd.value }}" onChange="{{ fd.set }}">
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ modal.hasLines }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap">
+                <div class="lbl">Order lines &mdash; item, quantity, FOB unit price in USD</div>
+                <button class="btn btn-primary" style="padding:4px 11px;font-size:12.5px;display:flex;align-items:center;gap:7px" onClick="{{ modal.searchItems }}">
+                  <i class="ph-duotone ph-magnifying-glass"></i>Search items
+                  <span style="font-size:11px;opacity:0.8;border:1px solid currentColor;border-radius:2px;padding:0 4px">F2</span>
+                </button>
+              </div>
+              <table class="table">
+                <thead><tr><th>Item</th><th class="n">Qty</th><th class="n">FOB USD</th><th class="n">Line value PKR</th><th></th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ modal.lines }}" as="l" hint-placeholder-count="2">
+                    <tr>
+                      <td>{{ l.name }}<div class="muted" style="font-size:12px">{{ l.code }}</div></td>
+                      <td class="n"><input class="input" style="width:76px;padding:3px 6px;text-align:right" value="{{ l.qty }}" onChange="{{ l.setQty }}"></td>
+                      <td class="n"><input class="input" style="width:82px;padding:3px 6px;text-align:right" value="{{ l.price }}" onChange="{{ l.setPrice }}"></td>
+                      <td class="n">{{ l.value }}</td>
+                      <td><button class="btn btn-ghost" style="padding:2px 7px;font-size:11.5px" onClick="{{ l.remove }}">Remove</button></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn btn-secondary" style="padding:4px 11px;font-size:12.5px" onClick="{{ modal.addLine }}">Add order line</button>
+                <div style="font-size:13px"><span class="lbl">FOB total</span> <span style="font-family:var(--font-heading);font-weight:600;font-variant-numeric:tabular-nums">{{ modal.fobTotal }}</span></div>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap">
+            <sc-if value="{{ modal.canDelete }}" hint-placeholder-val="{{ false }}">
+              <button class="btn btn-ghost" style="color:var(--color-accent-2);margin-right:auto" onClick="{{ modal.remove }}">Delete record</button>
+            </sc-if>
+            <button class="btn btn-ghost" onClick="{{ modal.cancel }}">Cancel</button>
+            <button class="btn btn-primary" onClick="{{ modal.save }}" style="display:flex;align-items:center;gap:7px"><i class="ph-duotone ph-floppy-disk"></i>Save</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasHelp }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed;inset:0;background:rgba(8,39,52,0.55);display:flex;align-items:flex-start;justify-content:center;padding:50px 20px;z-index:50;overflow-y:auto">
+        <div class="panel" style="width:min(920px,100%);padding:22px 24px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div style="width:38px;height:38px;background:#fff1f4;border-radius:11px;display:flex;align-items:center;justify-content:center">
+                <i class="ph-duotone ph-keyboard" style="font-size:21px;color:#a80055"></i>
+              </div>
+              <div>
+                <div style="font-family:var(--font-heading);font-weight:600;font-size:19px">Keyboard shortcuts</div>
+                <div class="muted" style="font-size:12.5px">Every button on every module has a key. Press <span class="kbd">?</span> any time to reopen this sheet.</div>
+              </div>
+            </div>
+            <button class="btn btn-ghost" style="padding:2px 8px" onClick="{{ closeHelp }}"><i class="ph-duotone ph-x"></i></button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px 26px">
+            <sc-for list="{{ helpGroups }}" as="g" hint-placeholder-count="6">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <i class="{{ g.icon }}" style="font-size:17px;color:{{ g.color }}"></i>
+                  <div style="font-family:var(--font-heading);font-weight:600;font-size:14.5px">{{ g.name }}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="5">
+                    <div style="display:flex;align-items:baseline;gap:10px;font-size:12.5px">
+                      <span class="kbd" style="flex:none;color:var(--color-accent-700)">{{ r.key }}</span>
+                      <span class="muted">{{ r.what }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasPalette }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed;inset:0;background:rgba(10,48,62,0.45);display:flex;align-items:flex-start;justify-content:center;padding:80px 20px;z-index:45">
+        <div class="panel" style="width:min(680px,100%);padding:0;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--color-neutral-300)">
+            <i class="ph-duotone ph-magnifying-glass" style="font-size:19px;color:#1186ac"></i>
+            <input class="input" autofocus="autofocus" placeholder="Search item, code, category or container lot&hellip;" style="flex:1;border:none;padding:4px 2px;font-size:15px" value="{{ palette.q }}" onChange="{{ palette.setQ }}">
+            <span class="muted" style="font-size:11.5px;white-space:nowrap;text-align:right">{{ palette.count }}<div style="font-size:10.5px">{{ palette.hint }}</div></span>
+            <button class="btn btn-ghost" style="padding:2px 8px" onClick="{{ palette.close }}"><i class="ph-duotone ph-x"></i></button>
+          </div>
+          <div style="max-height:340px;overflow-y:auto">
+            <sc-for list="{{ palette.rows }}" as="r" hint-placeholder-count="5">
+              <div onClick="{{ r.add }}" class="rl" style="display:flex;align-items:center;gap:12px;padding:10px 16px;background:{{ r.bg }};border-left:3px solid {{ r.bar }}">
+                <i class="ph-duotone ph-package" style="font-size:19px;color:#c27803;flex:none"></i>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13.5px;font-weight:600">{{ r.name }}</div>
+                  <div class="muted" style="font-size:11.5px">{{ r.meta }}</div>
+                </div>
+                <div style="text-align:right;flex:none">
+                  <div style="font-size:13.5px;font-variant-numeric:tabular-nums">{{ r.list }}</div>
+                  <div class="muted" style="font-size:11px">{{ r.floor }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div class="muted" style="display:flex;gap:16px;flex-wrap:wrap;padding:9px 16px;border-top:1px solid var(--color-neutral-300);font-size:11.5px;background:var(--color-neutral-100)">
+            <span>&uarr;&darr; move</span><span>Enter add at list price</span><span>Esc close</span><span>Rate and qty stay editable in the grid</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320,&quot;height&quot;:900},&quot;usdRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:296.5,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:250,&quot;max&quot;:340,&quot;step&quot;:0.5,&quot;unit&quot;:&quot; PKR/USD&quot;,&quot;section&quot;:&quot;Assumptions&quot;},&quot;taxRate&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:18,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:25,&quot;step&quot;:1,&quot;unit&quot;:&quot;%&quot;,&quot;section&quot;:&quot;Assumptions&quot;},&quot;salesSeesCost&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Permissions&quot;}}">
+const RATE = 296.5;
+const ITEMS = [
+  { code: 'HW-1001', name: 'Ball bearing 6204-2RS', uom: 'pcs', cat: 'Hardware' },
+  { code: 'HW-1002', name: 'Hex bolt M12 x 80, box 100', uom: 'box', cat: 'Hardware' },
+  { code: 'HW-1010', name: 'Angle grinder 850W', uom: 'pcs', cat: 'Power tools' },
+  { code: 'EL-2003', name: 'Copper cable 2.5mm, roll 100m', uom: 'roll', cat: 'Electrical' },
+  { code: 'EL-2007', name: 'LED panel light 36W', uom: 'pcs', cat: 'Electrical' },
+  { code: 'PL-3001', name: 'PPRC elbow 32mm, box 50', uom: 'box', cat: 'Plumbing' },
+  { code: 'PL-3004', name: 'Gate valve 2in brass', uom: 'pcs', cat: 'Plumbing' },
+  { code: 'TL-4002', name: 'Impact drill 13mm', uom: 'pcs', cat: 'Power tools' }
+];
+const SUPPLIERS = [
+  { id: 'SUP-01', name: 'HTM Tools Co. Ltd', port: 'Guangzhou, CN', terms: 'LC 60 days', containers: 2 },
+  { id: 'SUP-02', name: 'Sunrise Hardware Ind.', port: 'Ningbo, CN', terms: 'TT 30% advance', containers: 2 },
+  { id: 'SUP-03', name: 'Jinhe Fittings Group', port: 'Qingdao, CN', terms: 'LC at sight', containers: 1 },
+  { id: 'SUP-04', name: 'Yuhua Electricals', port: 'Shanghai, CN', terms: 'LC 90 days', containers: 1 }
+];
+const CUSTOMERS = [
+  { id: 'C-01', name: 'Al-Madina Hardware', city: 'Karachi', terms: '30 days', limit: 4000000, disc: 0, salesman: 'Imran Qadri' },
+  { id: 'C-02', name: 'Sindh Electric Traders', city: 'Hyderabad', terms: '45 days', limit: 2500000, disc: 2.5, salesman: 'Imran Qadri' },
+  { id: 'C-03', name: 'Gulf Tools & Machinery', city: 'Lahore', terms: 'Cash', limit: 1500000, disc: 5, salesman: 'Naveed Alam' },
+  { id: 'C-04', name: 'Pak Plumbing Mart', city: 'Karachi', terms: '30 days', limit: 1000000, disc: 0, salesman: 'Naveed Alam' },
+  { id: 'C-05', name: 'Continental Traders', city: 'Faisalabad', terms: '60 days', limit: 3000000, disc: 3, salesman: 'Imran Qadri' }
+];
+const CONTAINERS = [
+  { id: 'PSC-2601', ctr: 'MSKU-4471820', sup: 'SUP-01', bl: 'BL-HKG-77412', gd: 'KAPW-HC-118420', size: "40' HC", eta: '10 Jul 2026', recd: '12 Jul 2026', status: 'Selling',
+    lines: [ ['HW-1001', 4800, 1.95, 4200], ['HW-1002', 900, 7.40, 6300], ['TL-4002', 420, 21.50, 3200] ],
+    costs: [ ['Ocean freight', 1185000, 'o'], ['Marine insurance', 214000, 'v'], ['Customs duty 20%', 2394000, 'v'], ['Port & terminal (KPT)', 386000, 'o'], ['Clearing agent', 175000, 'q'], ['Inland transport', 248000, 'o'], ['Bank & LC charges', 142000, 'v'] ] },
+  { id: 'PSC-2602', ctr: 'TGHU-9013355', sup: 'SUP-02', bl: 'BL-NGB-30188', gd: 'KAPW-HC-121004', size: "40' HC", eta: '30 Jul 2026', recd: '02 Aug 2026', status: 'Selling',
+    lines: [ ['EL-2003', 1250, 33.00, 12500], ['EL-2007', 2600, 6.10, 3900], ['HW-1010', 560, 26.00, 4500] ],
+    costs: [ ['Ocean freight', 1310000, 'o'], ['Marine insurance', 268000, 'v'], ['Customs duty 20%', 3012000, 'v'], ['Port & terminal (KPT)', 402000, 'o'], ['Clearing agent', 180000, 'q'], ['Inland transport', 262000, 'o'], ['Bank & LC charges', 161000, 'v'] ] },
+  { id: 'PSC-2603', ctr: 'CSNU-6628104', sup: 'SUP-03', bl: 'BL-TAO-55290', gd: 'KAPW-HC-124771', size: "20' GP", eta: '26 Aug 2026', recd: '28 Aug 2026', status: 'Selling',
+    lines: [ ['PL-3001', 1800, 9.20, 5400], ['PL-3004', 1400, 12.80, 7000] ],
+    costs: [ ['Ocean freight', 690000, 'o'], ['Marine insurance', 118000, 'v'], ['Customs duty 20%', 1485000, 'v'], ['Port & terminal (KPT)', 240000, 'o'], ['Clearing agent', 150000, 'q'], ['Inland transport', 146000, 'o'], ['Bank & LC charges', 88000, 'v'] ] },
+  { id: 'PSC-2604', ctr: 'OOLU-2277431', sup: 'SUP-04', bl: 'BL-SHA-91002', gd: 'filed 11 Sep', size: "40' HC", eta: '09 Sep 2026', recd: '', status: 'In clearance',
+    lines: [ ['EL-2007', 3200, 6.05, 4800], ['EL-2003', 700, 32.40, 7000] ],
+    costs: [ ['Ocean freight', 1272000, 'o'], ['Marine insurance', 231000, 'v'], ['Customs duty 20%', 2640000, 'v'] ] },
+  { id: 'PSC-2605', ctr: 'MSKU-7710269', sup: 'SUP-02', bl: 'BL-NGB-31644', gd: '\u2014', size: "40' HC", eta: '22 Sep 2026', recd: '', status: 'In transit',
+    lines: [ ['HW-1001', 5200, 2.02, 4550], ['HW-1002', 1100, 7.55, 7700] ],
+    costs: [ ['Ocean freight', 1240000, 'o'] ] }
+];
+const SEED_INVOICES = [
+  { no: 'INV-0031', date: '05 Aug 2026', d: 40, cust: 'C-01', lines: [ ['HW-1001', 'PSC-2601', 1400, 1010], ['TL-4002', 'PSC-2601', 90, 10650] ] },
+  { no: 'INV-0032', date: '12 Aug 2026', d: 33, cust: 'C-02', lines: [ ['HW-1002', 'PSC-2601', 260, 3720] ] },
+  { no: 'INV-0033', date: '20 Aug 2026', d: 25, cust: 'C-03', lines: [ ['EL-2007', 'PSC-2602', 640, 3180], ['HW-1010', 'PSC-2602', 120, 13400] ] },
+  { no: 'INV-0034', date: '29 Aug 2026', d: 16, cust: 'C-01', lines: [ ['EL-2003', 'PSC-2602', 210, 15900], ['HW-1001', 'PSC-2601', 900, 1040] ] },
+  { no: 'INV-0035', date: '03 Sep 2026', d: 11, cust: 'C-04', lines: [ ['PL-3001', 'PSC-2603', 520, 4380], ['PL-3004', 'PSC-2603', 300, 5950] ] },
+  { no: 'INV-0036', date: '09 Sep 2026', d: 5, cust: 'C-02', lines: [ ['EL-2007', 'PSC-2602', 480, 3120], ['EL-2003', 'PSC-2602', 95, 16200] ] }
+];
+const SEED_RECEIPTS = [
+  { no: 'RV-0021', date: '18 Aug 2026', cust: 'C-01', amt: 1600000, mode: 'Cheque \u2014 Meezan 0431' },
+  { no: 'RV-0022', date: '27 Aug 2026', cust: 'C-03', amt: 3600000, mode: 'Bank transfer \u2014 HBL' },
+  { no: 'RV-0023', date: '01 Sep 2026', cust: 'C-02', amt: 900000, mode: 'Cheque \u2014 UBL 7742' },
+  { no: 'RV-0024', date: '10 Sep 2026', cust: 'C-01', amt: 2200000, mode: 'Bank transfer \u2014 Meezan' }
+];
+const PURCHASES = [
+  { id: 'PO-2601', sup: 'SUP-01', date: '02 Jun 2026', incoterm: 'FOB Guangzhou', terms: 'LC 60 days', status: 'Received', ctr: 'PSC-2601',
+    lines: [['HW-1001', 4800, 1.95], ['HW-1002', 900, 7.40], ['TL-4002', 420, 21.50]] },
+  { id: 'PO-2602', sup: 'SUP-02', date: '21 Jun 2026', incoterm: 'FOB Ningbo', terms: 'TT 30% advance', status: 'Received', ctr: 'PSC-2602',
+    lines: [['EL-2003', 1250, 33.00], ['EL-2007', 2600, 6.10], ['HW-1010', 560, 26.00]] },
+  { id: 'PO-2603', sup: 'SUP-03', date: '14 Jul 2026', incoterm: 'FOB Qingdao', terms: 'LC at sight', status: 'Received', ctr: 'PSC-2603',
+    lines: [['PL-3001', 1800, 9.20], ['PL-3004', 1400, 12.80]] },
+  { id: 'PO-2604', sup: 'SUP-04', date: '08 Aug 2026', incoterm: 'FOB Shanghai', terms: 'LC 90 days', status: 'Shipped', ctr: 'PSC-2604',
+    lines: [['EL-2007', 3200, 6.05], ['EL-2003', 700, 32.40]] },
+  { id: 'PO-2605', sup: 'SUP-02', date: '26 Aug 2026', incoterm: 'FOB Ningbo', terms: 'TT 30% advance', status: 'Shipped', ctr: 'PSC-2605',
+    lines: [['HW-1001', 5200, 2.02], ['HW-1002', 1100, 7.55]] },
+  { id: 'PO-2606', sup: 'SUP-01', date: '11 Sep 2026', incoterm: 'FOB Guangzhou', terms: 'LC 60 days', status: 'Ordered', ctr: '',
+    lines: [['TL-4002', 600, 21.90], ['HW-1010', 400, 25.60]] }
+];
+const PRICELIST = [];
+const ROLE_ACCESS = {
+  'Owner': '*',
+  'Accountant': ['dash', 'containers', 'costing', 'suppliers', 'purchases', 'stock', 'lotstock', 'stockentries', 'items', 'sales', 'pricing', 'customers', 'receivables', 'receipts', 'gl', 'tb', 'profit', 'reports'],
+  'Sales officer': ['dash', 'stock', 'lotstock', 'items', 'sales', 'pricing', 'customers', 'receivables', 'reports'],
+  'Store keeper': ['dash', 'containers', 'purchases', 'stock', 'lotstock', 'stockentries', 'items'],
+  'Import desk': ['dash', 'containers', 'costing', 'suppliers', 'purchases', 'items', 'stock', 'stockentries', 'reports']
+};
+const EDIT_RIGHTS = {
+  items: ['Owner', 'Accountant', 'Import desk', 'Store keeper'],
+  customers: ['Owner', 'Accountant', 'Sales officer'],
+  suppliers: ['Owner', 'Accountant', 'Import desk'],
+  containers: ['Owner', 'Import desk', 'Accountant'],
+  purchases: ['Owner', 'Import desk', 'Accountant'],
+  stockentries: ['Owner', 'Accountant', 'Store keeper', 'Import desk'],
+  receipts: ['Owner', 'Accountant'],
+  sales: ['Owner', 'Accountant', 'Sales officer'],
+  pricing: ['Owner', 'Accountant']
+};
+const JUMP = { '1': 'dash', '2': 'purchases', '3': 'containers', '4': 'costing', '5': 'stock', '6': 'stockentries', '7': 'sales', '8': 'pricing', '9': 'receivables', '0': 'gl' };
+const HELP = [
+  ['Move around', 'compass', [['1', 'Dashboard'], ['2', 'Purchase orders'], ['3', 'Container register'], ['4', 'Landed costing'], ['5', 'Stock on hand'], ['6', 'Stock entry register'], ['7', 'Sales invoices'], ['8', 'Price lists'], ['9', 'Receivables'], ['0', 'General ledger'], ['? or h', 'This shortcut sheet'], ['Esc', 'Close palette, dialog or sheet']]],
+  ['Every register', 'table', [['/', 'New record on this register'], ['Enter', 'Save the open dialog'], ['Esc', 'Cancel without saving']]],
+  ['Sales invoice', 'receipt', [['n', 'New sales invoice'], ['F2 or a', 'Search items to add'], ['\u2191 \u2193', 'Move in the search results'], ['Enter', 'Add at the list price'], ['d', 'Save as draft'], ['p or \u2318\u21b5', 'Post the invoice']]],
+  ['Purchase order', 'shopping-cart', [['2 then /', 'Raise a new order'], ['F2 or a', 'Search the item master'], ['Enter', 'Add a line at last FOB price'], ['s or \u2318\u21b5', 'Save the order'], ['r', 'Receive the oldest open order']]],
+  ['Stock entry', 'clipboard-text', [['6 then /', 'New stock entry'], ['e', 'New entry from the register'], ['F2 or a', 'Search stock in the chosen lot'], ['p or s', 'Post the entry']]],
+  ['Container & costing', 'calculator', [['3 then click', 'Open a container'], ['b', 'Cycle allocation basis'], ['c', 'Add an expense head'], ['i', 'Add an item from the master'], ['4', 'Landed costing overview']]]
+];
+const PH = 'ph-duotone ph-';
+const NAV = [
+  ['Overview', [['dash', 'Dashboard', 'gauge', '#62c5ee']]],
+  ['Imports', [['purchases', 'Purchase orders', 'shopping-cart', '#ffb03a'], ['containers', 'Container register', 'shipping-container', '#62c5ee'], ['costing', 'Landed costing', 'calculator', '#9ad3a6'], ['suppliers', 'Suppliers & LCs', 'factory', '#c4b5fd']]],
+  ['Inventory', [['stock', 'Stock on hand', 'stack', '#ffb03a'], ['lotstock', 'Container-wise stock', 'squares-four', '#62c5ee'], ['stockentries', 'Stock entry', 'clipboard-text', '#9ad3a6'], ['items', 'Item master', 'barcode', '#c4b5fd']]],
+  ['Sales', [['sales', 'Sales invoices', 'receipt', '#ff8ab5'], ['pricing', 'Customer price lists', 'tag', '#ffb03a'], ['customers', 'Customers', 'users-three', '#62c5ee']]],
+  ['Finance', [['receivables', 'Receivables & aging', 'hourglass', '#ff8ab5'], ['receipts', 'Receipts', 'hand-coins', '#9ad3a6'], ['gl', 'General ledger', 'book-open-text', '#c4b5fd'], ['tb', 'Trial balance', 'scales', '#62c5ee'], ['profit', 'Container profitability', 'trend-up', '#ffb03a']]],
+  ['Administration', [['reports', 'Report catalogue', 'files', '#62c5ee'], ['roles', 'Roles & approvals', 'shield-check', '#ff8ab5']]]
+];
+const TITLES = { dash: 'Management dashboard', purchases: 'Purchase orders', containers: 'Container register', container: 'Container detail', costing: 'Landed costing', suppliers: 'Suppliers & LCs', stock: 'Stock on hand', lotstock: 'Container-wise stock', stockentries: 'Stock entry register', stockentry: 'New stock entry', po: 'Purchase order entry', items: 'Item master', sales: 'Sales invoices', invoice: 'New sales invoice', pricing: 'Customer price lists', customers: 'Customers', receivables: 'Receivables & aging', receipts: 'Receipts', gl: 'General ledger', tb: 'Trial balance', profit: 'Container profitability', reports: 'Report catalogue', roles: 'Roles & approvals' };
+
+class Component extends DCLogic {
+  state = {
+    screen: 'dash', role: 'Owner', basis: 'o-value', toast: '', ctr: 'PSC-2601', filter: 'All',
+    invoices: SEED_INVOICES.map(function (i) { return Object.assign({}, i, { lines: i.lines.map(function (l) { return l.slice(); }) }); }),
+    receipts: SEED_RECEIPTS.slice(),
+    draft: null
+  };
+
+  // ---------- helpers ----------
+  item(code) { return ITEMS.find(function (i) { return i.code === code; }) || { code: code, name: code, uom: '' }; }
+  fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+  fmtc(n) {
+    const a = Math.abs(n);
+    if (a >= 1e6) return (n / 1e6).toFixed(2) + ' M';
+    if (a >= 1e3) return (n / 1e3).toFixed(0) + ' K';
+    return this.fmt(n);
+  }
+  pct(n) { return (n * 100).toFixed(1) + '%'; }
+  go(screen, extra) { const s = Object.assign({ screen: screen, toast: '' }, extra || {}); this.setState(s); }
+
+  /** unit costing for every container lot, on the current allocation basis */
+  lots() {
+    const self = this;
+    const basis = this.state.basis === 'o-value' ? 'v' : this.state.basis === 'o-weight' ? 'w' : 'q';
+    const rate = this.props.usdRate || RATE;
+    return CONTAINERS.map(function (c) {
+      const rows = c.lines.map(function (l) {
+        return { code: l[0], qty: l[1], fob: l[1] * l[2] * rate, wt: l[3] };
+      });
+      const tot = { v: 0, w: 0, q: 0 };
+      rows.forEach(function (r) { tot.v += r.fob; tot.w += r.wt; tot.q += r.qty; });
+      const heads = c.costs.map(function (x) {
+        const b = x[2] === 'o' ? basis : x[2];
+        return { head: x[0], amount: x[1], b: b };
+      });
+      const costTotal = heads.reduce(function (s, h) { return s + h.amount; }, 0);
+      rows.forEach(function (r) {
+        let alloc = 0;
+        heads.forEach(function (h) {
+          const share = h.b === 'v' ? r.fob / tot.v : h.b === 'w' ? r.wt / tot.w : r.qty / tot.q;
+          alloc += h.amount * share;
+        });
+        r.alloc = alloc;
+        r.landed = r.fob + alloc;
+        r.unit = r.landed / r.qty;
+        r.sold = self.soldQty(c.id, r.code);
+        r.adj = self.adjQty(c.id, r.code);
+        r.onHand = r.qty + r.adj - r.sold;
+        r.value = r.onHand * r.unit;
+      });
+      return { c: c, rows: rows, fobTotal: tot.v, wt: tot.w, qty: tot.q, costTotal: costTotal, landed: tot.v + costTotal, live: !!c.recd };
+    });
+  }
+  lot(id) { return this.lots().find(function (l) { return l.c.id === id; }); }
+  soldQty(ctr, code) {
+    let q = 0;
+    this.state.invoices.forEach(function (inv) {
+      inv.lines.forEach(function (l) { if (l[1] === ctr && l[0] === code) q += l[2]; });
+    });
+    return q;
+  }
+  adjQty(ctr, code) {
+    let q = 0;
+    (this.state.stockEntries || []).forEach(function (e) {
+      e.lines.forEach(function (l) { if (l[1] === ctr && l[0] === code) q += l[2]; });
+    });
+    return q;
+  }
+  /** price-list record per item, seeded from landed cost the first time it is read */
+  priceRec(code) {
+    let p = PRICELIST.find(function (x) { return x.code === code; });
+    if (!p) {
+      let cost = 0, n = 0;
+      this.lots().forEach(function (l) { l.rows.forEach(function (r) { if (r.code === code) { cost += r.unit; n++; } }); });
+      const base = n ? cost / n : 1000;
+      p = { code: code, list: Math.round(base * 1.34 / 5) * 5, b: 2.5, c: 5, d: 3, floor: 8 };
+      PRICELIST.push(p);
+    }
+    return p;
+  }
+  tierPrice(code, cust) {
+    const p = this.priceRec(code);
+    const d = cust ? cust.disc : 0;
+    return Math.round(p.list * (1 - d / 100) / 5) * 5;
+  }
+  unitCost(ctr, code) {
+    const l = this.lot(ctr);
+    const r = l && l.rows.find(function (x) { return x.code === code; });
+    return r ? r.unit : 0;
+  }
+  avail(ctr, code) {
+    const l = this.lot(ctr);
+    if (!l || !l.live) return 0;
+    const r = l.rows.find(function (x) { return x.code === code; });
+    return r ? r.onHand : 0;
+  }
+  /** quantity declared on the container's packing list, whether received yet or not */
+  declaredQty(ctr, code) {
+    const l = this.lot(ctr);
+    const r = l && l.rows.find(function (x) { return x.code === code; });
+    return r ? r.qty : 0;
+  }
+  isReceived(ctr) { const l = this.lot(ctr); return !!(l && l.live); }
+  invTotals(inv) {
+    const self = this;
+    let net = 0, cogs = 0;
+    inv.lines.forEach(function (l) { net += l[2] * l[3]; cogs += l[2] * self.unitCost(l[1], l[0]); });
+    const tax = net * ((this.props.taxRate == null ? 18 : this.props.taxRate) / 100);
+    return { net: net, cogs: cogs, gp: net - cogs, tax: tax, gross: net + tax };
+  }
+  custBal(id) {
+    const self = this;
+    let due = 0;
+    this.state.invoices.forEach(function (i) { if (i.cust === id) due += self.invTotals(i).gross; });
+    this.state.receipts.forEach(function (r) { if (r.cust === id) due -= r.amt; });
+    return due;
+  }
+  books() {
+    const self = this;
+    let sales = 0, cogs = 0, tax = 0, gross = 0;
+    this.state.invoices.forEach(function (i) { const t = self.invTotals(i); sales += t.net; cogs += t.cogs; tax += t.tax; gross += t.gross; });
+    const recd = this.state.receipts.reduce(function (s, r) { return s + r.amt; }, 0);
+    const stock = this.lots().reduce(function (s, l) { return l.live ? s + l.rows.reduce(function (q, r) { return q + r.value; }, 0) : s; }, 0);
+    const inTransit = this.lots().reduce(function (s, l) { return l.live ? s : s + l.landed; }, 0);
+    return { sales: sales, cogs: cogs, gp: sales - cogs, tax: tax, gross: gross, recd: recd, ar: gross - recd, stock: stock, inTransit: inTransit };
+  }
+
+  // ---------- invoice draft ----------
+  startInvoice = () => {
+    const n = 37 + (this.state.invoices.length - SEED_INVOICES.length);
+    this.setState({ screen: 'invoice', toast: '', draft: { no: 'INV-00' + n, cust: 'C-01', lines: [], pick: '' } });
+  };
+  editDraft(fn) { const d = Object.assign({}, this.state.draft); fn(d); this.setState({ draft: d }); }
+  pickOptions() {
+    const self = this;
+    const opts = [];
+    this.lots().forEach(function (l) {
+      if (!l.live) return;
+      l.rows.forEach(function (r) {
+        if (r.onHand <= 0) return;
+        opts.push({ id: l.c.id + '|' + r.code, label: self.item(r.code).name + ' \u2014 ' + l.c.id + ' (' + self.fmt(r.onHand) + ' ' + self.item(r.code).uom + ')' });
+      });
+    });
+    return opts;
+  }
+  floorPrice(ctr, code) { return this.unitCost(ctr, code) * (1 + this.priceRec(code).floor / 100); }
+  postDraft = () => {
+    const self = this;
+    const d = this.state.draft;
+    if (!d || !d.lines.length) { this.setState({ toast: 'Add at least one line before posting.' }); return; }
+    const below = d.lines.some(function (l) { return l[3] < self.floorPrice(l[1], l[0]); });
+    if (below && this.state.role !== 'Owner') {
+      this.setState({ screen: 'sales', draft: null, toast: d.no + ' sent to the owner for below-floor price approval. Stock is reserved, nothing posted to the ledger yet.' });
+      return;
+    }
+    const inv = { no: d.no, date: '14 Sep 2026', d: 0, cust: d.cust, lines: d.lines.map(function (l) { return l.slice(); }) };
+    const t = this.invTotals(inv);
+    const cust = CUSTOMERS.find(function (c) { return c.id === d.cust; });
+    this.setState({
+      invoices: this.state.invoices.concat([inv]), draft: null, screen: 'sales',
+      toast: d.no + ' posted \u2014 ' + this.fmt(t.gross) + ' billed to ' + cust.name + ', gross profit ' + this.fmt(t.gp) + ' (' + this.pct(t.gp / t.net) + '), stock issued from ' + d.lines.map(function (l) { return l[1]; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(', ') + ' and the journal batch written.'
+    });
+  };
+  receive = (custId) => {
+    const bal = this.custBal(custId);
+    if (bal <= 0) { this.setState({ toast: 'No balance outstanding on this account.' }); return; }
+    const cust = CUSTOMERS.find(function (c) { return c.id === custId; });
+    const amt = Math.round(bal * 0.6);
+    const no = 'RV-00' + (25 + this.state.receipts.length - SEED_RECEIPTS.length);
+    this.setState({
+      receipts: this.state.receipts.concat([{ no: no, date: '14 Sep 2026', cust: custId, amt: amt, mode: 'Bank transfer \u2014 Meezan' }]),
+      toast: no + ' recorded \u2014 ' + this.fmt(amt) + ' from ' + cust.name + '. Bank debited, receivable credited, aging rebuilt.'
+    });
+  };
+
+  // ---------- roles ----------
+  allowed(screen) {
+    const a = ROLE_ACCESS[this.state.role];
+    return a === '*' || a.indexOf(screen) !== -1;
+  }
+  canEdit(screen) { const r = EDIT_RIGHTS[screen]; return this.state.role === 'Owner' || (!!r && r.indexOf(this.state.role) !== -1); }
+  canDelete(screen) { return this.state.role === 'Owner'; }
+
+  // ---------- generic CRUD ----------
+  entity(screen) {
+    const sel = ['Draft', 'Ordered', 'Shipped', 'Received'];
+    const map = {
+      items: { label: 'Item', list: ITEMS, blank: { code: '', name: '', uom: 'pcs', cat: 'Hardware' },
+        fields: [['code', 'Item code'], ['name', 'Description'], ['uom', 'Unit of measure', ['pcs', 'box', 'roll', 'kg', 'set']], ['cat', 'Category', ['Hardware', 'Electrical', 'Plumbing', 'Power tools']]] },
+      customers: { label: 'Customer', list: CUSTOMERS, blank: { id: '', name: '', city: 'Karachi', terms: '30 days', limit: 1000000, disc: 0, salesman: 'Imran Qadri' },
+        fields: [['id', 'Code'], ['name', 'Customer name'], ['city', 'City'], ['terms', 'Payment terms', ['Cash', '30 days', '45 days', '60 days']], ['limit', 'Credit limit', 'num'], ['disc', 'Standing discount %', 'num'], ['salesman', 'Salesman', ['Imran Qadri', 'Naveed Alam']]] },
+      suppliers: { label: 'Supplier', list: SUPPLIERS, blank: { id: '', name: '', port: '', terms: 'LC at sight' },
+        fields: [['id', 'Code'], ['name', 'Supplier name'], ['port', 'Origin port'], ['terms', 'Payment terms', ['LC at sight', 'LC 60 days', 'LC 90 days', 'TT 30% advance']]] },
+      containers: { label: 'Container', list: CONTAINERS, blank: { id: '', ctr: '', sup: 'SUP-01', bl: '', gd: '\u2014', size: "40' HC", eta: '', recd: '', status: 'In transit', lines: [], costs: [] },
+        fields: [['id', 'Lot reference'], ['ctr', 'Container number'], ['sup', 'Supplier', SUPPLIERS.map(function (s) { return s.id; })], ['bl', 'Bill of lading'], ['gd', 'Goods declaration'], ['size', 'Size', ["20' GP", "40' HC", "40' GP"]], ['eta', 'ETA'], ['recd', 'Received on'], ['status', 'Status', ['In transit', 'In clearance', 'Selling', 'Closed']]] },
+      pricing: { label: 'Price list line', list: PRICELIST, blank: { code: ITEMS[0].code, list: 1000, b: 2.5, c: 5, d: 3, floor: 8 },
+        fields: [['code', 'Item', ITEMS.map(function (i) { return i.code; })], ['list', 'List price PKR', 'num'], ['floor', 'Floor markup over cost %', 'num'], ['b', 'Tier B discount %', 'num'], ['c', 'Tier C discount %', 'num'], ['d', 'Tier D discount %', 'num']] },
+      purchases: { label: 'Purchase order', list: PURCHASES, blank: { id: '', sup: 'SUP-01', date: '14 Sep 2026', incoterm: 'FOB Ningbo', terms: 'LC at sight', status: 'Draft', ctr: '', lines: [] },
+        fields: [['id', 'PO number'], ['sup', 'Supplier', SUPPLIERS.map(function (s) { return s.id; })], ['date', 'Order date'], ['incoterm', 'Incoterm & port'], ['terms', 'Payment terms', ['LC at sight', 'LC 60 days', 'LC 90 days', 'TT 30% advance']], ['status', 'Status', sel]], hasLines: true }
+    };
+    return map[screen];
+  }
+  cycleBasis = () => {
+    const order = ['o-value', 'o-weight', 'o-quantity'];
+    const next = order[(order.indexOf(this.state.basis) + 1) % 3];
+    this.setState({ basis: next, toast: 'Overhead heads re-allocated by ' + next.slice(2) + ' \u2014 unit costs and stock valuation updated.' });
+  };
+  costCtr() { return CONTAINERS.find(function (c) { return true; }) && (this.lot(this.state.ctr) ? this.state.ctr : 'PSC-2601'); }
+  setCost(i, field, raw) {
+    const c = CONTAINERS.find(function (x) { return x.id === this.state.ctr; }.bind(this));
+    if (!c) return;
+    if (field === 'amount') c.costs[i][1] = Math.max(0, parseFloat(raw) || 0);
+    else if (field === 'head') c.costs[i][0] = raw;
+    else c.costs[i][2] = raw;
+    this.forceUpdate();
+  }
+  addCostHead = () => {
+    const c = CONTAINERS.find(function (x) { return x.id === this.state.ctr; }.bind(this));
+    if (!c) return;
+    c.costs.push(['New expense head', 0, 'o']);
+    this.setState({ toast: 'Expense head added to ' + c.id + ' \u2014 name it, enter the amount and pick its allocation basis.' });
+  };
+  removeCost(i) {
+    const c = CONTAINERS.find(function (x) { return x.id === this.state.ctr; }.bind(this));
+    if (!c) return;
+    const gone = c.costs[i][0];
+    c.costs.splice(i, 1);
+    this.setState({ toast: gone + ' removed \u2014 landed cost, unit costs and stock value recalculated.' });
+  }
+
+  // ---------- container lot items ----------
+  ctrRec() { const id = this.state.ctr; return CONTAINERS.find(function (x) { return x.id === id; }); }
+  addLotItem(code, fob) {
+    const c = this.ctrRec();
+    if (!c) return;
+    if (c.lines.some(function (l) { return l[0] === code; })) { this.setState({ toast: this.item(code).name + ' is already on this lot \u2014 edit its quantity instead.' }); return; }
+    c.lines.push([code, 100, fob || 10, 300]);
+    this.setState({ palette: null, toast: this.item(code).name + ' added to ' + c.id + ' \u2014 set the received quantity, FOB unit price and weight; costs re-spread immediately.' });
+  }
+  setLotLine(i, field, raw) {
+    const c = this.ctrRec();
+    if (!c) return;
+    const v = Math.max(0, parseFloat(raw) || 0);
+    c.lines[i][field === 'qty' ? 1 : field === 'fob' ? 2 : 3] = v;
+    this.forceUpdate();
+  }
+  removeLotLine(i) {
+    const c = this.ctrRec();
+    if (!c) return;
+    const gone = this.item(c.lines[i][0]).name;
+    c.lines.splice(i, 1);
+    this.setState({ toast: gone + ' removed from ' + c.id + ' \u2014 lot quantities, unit costs and stock value recalculated.' });
+  }
+
+  // ---------- purchase order screen ----------
+  startPO = () => {
+    this.setState({ screen: 'po', toast: '', poDraft: { idx: -1, rec: { id: 'PO-' + (2607 + PURCHASES.length - 6), sup: 'SUP-01', date: '14 Sep 2026', incoterm: 'FOB Ningbo', terms: 'LC at sight', status: 'Draft', ctr: '', lines: [] } } });
+  };
+  editPO(idx) { this.setState({ screen: 'po', toast: '', poDraft: { idx: idx, rec: JSON.parse(JSON.stringify(PURCHASES[idx])) } }); }
+  editPoDraft(fn) { const d = Object.assign({}, this.state.poDraft); d.rec = Object.assign({}, d.rec); fn(d.rec); this.setState({ poDraft: d }); }
+  savePO = () => {
+    const d = this.state.poDraft;
+    if (!d) return;
+    if (!d.rec.id) { this.setState({ toast: 'The order needs a PO number.' }); return; }
+    if (!d.rec.lines.length) { this.setState({ toast: 'Add at least one order line \u2014 press F2 to search the item master.' }); return; }
+    if (d.idx < 0) PURCHASES.push(d.rec); else PURCHASES[d.idx] = d.rec;
+    const fob = d.rec.lines.reduce(function (q, l) { return q + l[1] * l[2]; }, 0) * (this.props.usdRate || RATE);
+    this.setState({ poDraft: null, screen: 'purchases', toast: d.rec.id + ' ' + (d.idx < 0 ? 'raised' : 'updated') + ' \u2014 ' + d.rec.lines.length + ' lines, FOB commitment ' + this.fmt(fob) + ' PKR. Receive it from the register to create the container lot.' });
+  };
+
+  openNew = () => {
+    if (this.state.screen === 'purchases') { this.startPO(); return; }
+    const e = this.entity(this.state.screen);
+    if (!e) return;
+    const blank = JSON.parse(JSON.stringify(e.blank));
+    if (this.state.screen === 'purchases') blank.id = 'PO-' + (2607 + PURCHASES.length - 6);
+    this.setState({ modal: { screen: this.state.screen, mode: 'new', idx: -1, draft: blank }, toast: '' });
+  };
+  openEdit(screen, idx) {
+    if (screen === 'purchases') { this.editPO(idx); return; }
+    const e = this.entity(screen);
+    this.setState({ modal: { screen: screen, mode: 'edit', idx: idx, draft: JSON.parse(JSON.stringify(e.list[idx])) }, toast: '' });
+  }
+  removeRec(screen, idx) {
+    const e = this.entity(screen);
+    const gone = e.list[idx];
+    e.list.splice(idx, 1);
+    this.setState({ toast: e.label + ' ' + (gone.id || gone.code) + ' deleted. In the live system this is a soft delete kept in the audit trail.' });
+  }
+  saveModal = () => {
+    const m = this.state.modal;
+    const e = this.entity(m.screen);
+    if (!m.draft.id && !m.draft.code) { this.setState({ toast: 'A code or reference is required.' }); return; }
+    if (m.mode === 'new') e.list.push(m.draft); else e.list[m.idx] = m.draft;
+    this.setState({ modal: null, toast: e.label + ' ' + (m.draft.id || m.draft.code) + ' ' + (m.mode === 'new' ? 'created' : 'updated') + '. ' + (e.hasLines ? 'Purchase value recalculated.' : 'Dependent screens refreshed.') });
+  };
+  receivePO(idx) {
+    const po = PURCHASES[idx];
+    if (po.ctr) { this.setState({ toast: po.id + ' is already linked to container ' + po.ctr + '.' }); return; }
+    const id = 'PSC-26' + String(10 + CONTAINERS.length);
+    const fob = po.lines.reduce(function (q, l) { return q + l[1] * l[2]; }, 0) * (this.props.usdRate || RATE);
+    CONTAINERS.push({
+      id: id, ctr: 'NEW-' + String(1000 + CONTAINERS.length), sup: po.sup, bl: 'BL-' + po.id, gd: 'filed 14 Sep', size: "40' HC",
+      eta: '14 Sep 2026', recd: '', status: 'In clearance',
+      lines: po.lines.map(function (l) { return [l[0], l[1], l[2], Math.round(l[1] * 3.2)]; }),
+      costs: [['Ocean freight', Math.round(fob * 0.09), 'o'], ['Marine insurance', Math.round(fob * 0.016), 'v'], ['Customs duty 20%', Math.round(fob * 0.2), 'v']]
+    });
+    po.status = 'Received'; po.ctr = id;
+    this.setState({ toast: po.id + ' received \u2014 container lot ' + id + ' created with a provisional landed-cost worksheet. Open it to allocate port and clearing costs.' });
+  }
+
+  // ---------- item palette & shortcuts ----------
+  componentDidMount() {
+    const self = this;
+    this._key = function (ev) {
+      const s = self.state;
+      const tag = (ev.target.tagName || '').toLowerCase();
+      const typing = tag === 'input' || tag === 'select' || tag === 'textarea';
+      if (ev.key === 'Escape') {
+        if (s.palette) self.setState({ palette: null });
+        else if (s.modal) self.setState({ modal: null });
+        else if (s.help) self.setState({ help: false });
+        return;
+      }
+      if (s.palette) {
+        const list = self.paletteList();
+        if (ev.key === 'ArrowDown') { ev.preventDefault(); self.setState({ palette: Object.assign({}, s.palette, { sel: Math.min(list.length - 1, s.palette.sel + 1) }) }); }
+        else if (ev.key === 'ArrowUp') { ev.preventDefault(); self.setState({ palette: Object.assign({}, s.palette, { sel: Math.max(0, s.palette.sel - 1) }) }); }
+        else if (ev.key === 'Enter') { ev.preventDefault(); self.addFromPalette(list[s.palette.sel]); }
+        return;
+      }
+      if (typing) {
+        if (ev.key === 'Enter' && s.screen === 'invoice' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); self.postDraft(); }
+        return;
+      }
+      if (s.modal) { if (ev.key === 'Enter') { ev.preventDefault(); self.saveModal(); } return; }
+      const k = ev.key;
+      if (k === '?' || (k === 'h' && !ev.ctrlKey)) { ev.preventDefault(); self.setState({ help: !s.help }); return; }
+      if (s.help) { if (k === 'Escape') self.setState({ help: false }); return; }
+      if (JUMP[k]) { ev.preventDefault(); const t = JUMP[k]; if (self.allowed(t)) self.go(t); else self.setState({ toast: 'Your role has no access to that module.' }); return; }
+      if (k === 'F2' || ((s.screen === 'invoice' || s.screen === 'stockentry' || s.screen === 'po') && k === 'a')) { ev.preventDefault(); self.openPalette(); }
+      else if (k === '/' && s.screen === 'stockentries') { ev.preventDefault(); if (self.canEdit('stockentries')) self.startStockEntry(); }
+      else if (k === '/' && self.entity(s.screen)) { ev.preventDefault(); if (self.canEdit(s.screen)) self.openNew(); }
+      else if (k === 'n' && s.screen !== 'invoice') { ev.preventDefault(); self.startInvoice(); }
+      else if (s.screen === 'invoice' && (k === 'p' || (k === 'Enter' && (ev.ctrlKey || ev.metaKey)))) { ev.preventDefault(); self.postDraft(); }
+      else if (s.screen === 'invoice' && k === 'd') { ev.preventDefault(); self.saveDraft(); }
+      else if (s.screen === 'stockentry' && (k === 'p' || k === 's')) { ev.preventDefault(); self.postStockEntry(); }
+      else if (s.screen === 'po' && (k === 's' || (k === 'Enter' && (ev.ctrlKey || ev.metaKey)))) { ev.preventDefault(); self.savePO(); }
+      else if (s.screen === 'stockentries' && k === 'e') { ev.preventDefault(); if (self.canEdit('stockentries')) self.startStockEntry(); }
+      else if (s.screen === 'container' && k === 'b') { ev.preventDefault(); self.cycleBasis(); }
+      else if (s.screen === 'container' && k === 'c' && self.canEdit('containers')) { ev.preventDefault(); self.addCostHead(); }
+      else if (s.screen === 'container' && k === 'i' && self.canEdit('containers')) { ev.preventDefault(); self.openPalette('lot'); }
+      else if (s.screen === 'purchases' && k === 'r') { ev.preventDefault(); const i = PURCHASES.findIndex(function (p) { return p.status !== 'Received'; }); if (i >= 0 && self.canEdit('purchases')) self.receivePO(i); }
+    };
+    document.addEventListener('keydown', this._key);
+  }
+  componentWillUnmount() { document.removeEventListener('keydown', this._key); }
+  openPalette = (mode) => {
+    const m = typeof mode === 'string' ? mode : this.state.screen === 'po' ? 'po' : this.state.screen === 'stockentry' ? 'stock' : 'sale';
+    if (m === 'sale' && this.state.screen !== 'invoice') this.startInvoice();
+    this.setState({ palette: { q: '', sel: 0, mode: m } });
+  };
+  paletteList() {
+    const self = this;
+    const p = this.state.palette || {};
+    const q = (p.q || '').toLowerCase();
+    const mode = p.mode || 'sale';
+    const cust = CUSTOMERS.find(function (c) { return c.id === (self.state.draft || {}).cust; }) || CUSTOMERS[0];
+    const out = [];
+    const hit = function (hay) { return !q || hay.toLowerCase().indexOf(q) !== -1; };
+    if (mode === 'po' || mode === 'lot') {
+      ITEMS.forEach(function (it) {
+        if (!hit(it.name + ' ' + it.code + ' ' + it.cat)) return;
+        let last = 0;
+        PURCHASES.forEach(function (po) { po.lines.forEach(function (l) { if (l[0] === it.code) last = l[2]; }); });
+        out.push({ mode: mode, code: it.code, name: it.name, cat: it.cat, uom: it.uom, lot: '', avail: 0,
+          meta: it.code + ' \u00b7 ' + it.cat + ' \u00b7 ' + it.uom, fob: last || 10,
+          right: last ? 'USD ' + last.toFixed(2) : 'new item', rightSub: 'last FOB price' });
+      });
+      return out;
+    }
+    const receipt = mode === 'stock' && (self.state.stockDraft || {}).type === 'Goods receipt';
+    const onlyLot = mode === 'stock' ? ((self.state.stockDraft || {}).lot || '') : '';
+    this.lots().forEach(function (l) {
+      if (onlyLot && l.c.id !== onlyLot) return;
+      if (!l.live && !receipt) return;
+      l.rows.forEach(function (r) {
+        if (mode === 'sale' && r.onHand <= 0) return;
+        const it = self.item(r.code);
+        if (!hit(it.name + ' ' + r.code + ' ' + l.c.id + ' ' + it.cat)) return;
+        const list = self.tierPrice(r.code, cust);
+        out.push({ mode: mode, code: r.code, lot: l.c.id, name: it.name, cat: it.cat, uom: it.uom, avail: r.onHand, unit: r.unit,
+          floor: self.floorPrice(l.c.id, r.code), list: list,
+          meta: r.code + ' \u00b7 ' + l.c.id + ' \u00b7 ' + (l.live ? self.fmt(r.onHand) + ' ' + it.uom + ' on hand' : 'not yet received \u00b7 ' + l.c.status),
+          right: mode === 'stock' ? (l.live ? self.fmt(r.onHand) : self.fmt(r.qty)) : self.fmt(list),
+          rightSub: mode === 'stock' ? (l.live ? 'current balance' : 'expected on the lot') : 'floor ' + self.fmt(self.floorPrice(l.c.id, r.code)) });
+      });
+    });
+    return out;
+  }
+  addFromPalette(row) {
+    const self = this;
+    if (!row) return;
+    const mode = (this.state.palette || {}).mode || 'sale';
+    if (mode === 'lot') { this.addLotItem(row.code, row.fob); return; }
+    if (mode === 'po') {
+      const d = Object.assign({}, this.state.poDraft || { idx: -1, rec: { id: 'PO-' + (2607 + PURCHASES.length - 6), sup: 'SUP-01', date: '14 Sep 2026', incoterm: 'FOB Ningbo', terms: 'LC at sight', status: 'Draft', ctr: '', lines: [] } });
+      d.rec = Object.assign({}, d.rec);
+      d.rec.lines = (d.rec.lines || []).concat([[row.code, 100, row.fob]]);
+      this.setState({ poDraft: d, screen: 'po', palette: { q: '', sel: 0, mode: 'po' }, toast: row.name + ' added at USD ' + row.fob.toFixed(2) + ' \u2014 quantity and price are editable in the line grid.' });
+      return;
+    }
+    if (mode === 'stock') {
+      const sd = Object.assign({ no: this.nextStockNo(), type: 'Adjustment', lines: [] }, this.state.stockDraft || {});
+      const receiving = sd.type === 'Goods receipt' && !this.isReceived(row.lot);
+      sd.lines = sd.lines.concat([[row.code, row.lot, receiving ? this.declaredQty(row.lot, row.code) : 0, receiving ? 'Counted on put-away' : 'Physical count variance']]);
+      this.setState({ stockDraft: sd, screen: 'stockentry', palette: { q: '', sel: 0, mode: 'stock' }, toast: row.name + ' (' + row.lot + ') added \u2014 enter the signed quantity: positive adds stock, negative writes it off.' });
+      return;
+    }
+    if (!this.state.draft) this.startInvoice();
+    this.setState(function (st) {
+      const d = Object.assign({}, st.draft || { no: 'INV-0037', cust: 'C-01', lines: [], pick: '' });
+      const qty = Math.min(50, row.avail);
+      d.lines = d.lines.concat([[row.code, row.lot, qty, row.list]]);
+      return { draft: d, screen: 'invoice', palette: { q: '', sel: 0, mode: 'sale' }, toast: row.name + ' added from ' + row.lot + ' at ' + self.fmt(row.list) + ' \u2014 qty and rate are editable in the grid.' };
+    });
+  }
+
+  // ---------- stock entry ----------
+  nextStockNo() { return 'SE-00' + (11 + (this.state.stockEntries || []).length); }
+  startStockEntry = () => {
+    this.setState({ screen: 'stockentry', toast: '', stockDraft: { no: this.nextStockNo(), type: 'Adjustment', lines: [] } });
+  };
+  editStockDraft(fn) { const d = Object.assign({}, this.state.stockDraft); fn(d); this.setState({ stockDraft: d }); }
+  postStockEntry = () => {
+    const self = this;
+    const d = this.state.stockDraft;
+    if (!d || !d.lines.length) { this.setState({ toast: 'Add at least one line \u2014 press F2 to search stock.' }); return; }
+    if (d.lines.some(function (l) { return !l[2]; })) { this.setState({ toast: 'Every line needs a non-zero signed quantity.' }); return; }
+    const receiving = d.type === 'Goods receipt';
+    let value = 0, counted = 0;
+    // a goods receipt brings the lot's declared quantity into stock; the entry itself
+    // records only the variance between counted and declared units
+    const stored = d.lines.map(function (l) {
+      const live = self.isReceived(l[1]);
+      const declared = self.declaredQty(l[1], l[0]);
+      const net = receiving && !live ? l[2] - declared : l[2];
+      counted += receiving && !live ? l[2] : 0;
+      value += net * self.unitCost(l[1], l[0]);
+      const reason = receiving && !live ? l[3] + ' \u00b7 counted ' + self.fmt(l[2]) + ' against ' + self.fmt(declared) + ' declared' : l[3];
+      return [l[0], l[1], net, reason];
+    });
+    const entry = { no: d.no, date: '14 Sep 2026', type: d.type, lines: stored, value: value, by: this.state.role };
+    let received = '';
+    if (receiving) {
+      d.lines.forEach(function (l) {
+        const c = CONTAINERS.find(function (x) { return x.id === l[1]; });
+        if (c && !c.recd) { c.recd = '14 Sep 2026'; c.status = 'Selling'; received += (received ? ', ' : '') + c.id; }
+      });
+    }
+    this.setState({
+      stockEntries: (this.state.stockEntries || []).concat([entry]), stockDraft: null, screen: 'stockentries',
+      toast: d.no + ' posted \u2014 ' + d.lines.length + ' line' + (d.lines.length > 1 ? 's' : '') + ', stock value impact ' + this.fmt(value) + '.' + (received ? ' ' + received + ' marked received and now selling with ' + this.fmt(counted) + ' units counted in; the entry carries only the variance against the declared quantity.' : '') + ' On-hand balances, lot valuation, the dashboard and the inventory ledger are updated.'
+    });
+  };
+  saveDraft = () => {
+    const d = this.state.draft;
+    if (!d || !d.lines.length) { this.setState({ toast: 'Nothing to save yet.' }); return; }
+    this.setState({ toast: d.no + ' saved as a draft \u2014 stock is reserved but no ledger entry is made until you post.' });
+  };
+
+  // ---------- render ----------
+  cell(v, o) {
+    o = o || {};
+    return { v: v, cls: o.n ? 'n' : '', sub: o.sub || '', tag: o.tag || '', plain: !o.tag && !o.actions, weight: o.b ? '600' : '400', font: o.b ? 'var(--font-heading)' : 'inherit', action: o.action || '', actionLabel: o.actionLabel || '', actions: o.actions || [] };
+  }
+  renderVals() {
+    const self = this;
+    const s = this.state;
+    const b = this.books();
+    const lots = this.lots();
+    const live = lots.filter(function (l) { return l.live; });
+    const rail = s.rail === true;
+    const labelDisplay = rail ? 'none' : 'block';
+    const closed = s.closed || {};
+    const nav = NAV.map(function (g) {
+      const shut = closed[g[0]] === true && !rail;
+      const items = g[1].filter(function (n) { return self.allowed(n[0]); });
+      if (!items.length) return null;
+      g = [g[0], items];
+      return {
+        name: g[0], chev: PH + (shut ? 'caret-right' : 'caret-down'),
+        bodyDisplay: shut ? 'none' : 'flex',
+        toggle: function () { const c = Object.assign({}, self.state.closed || {}); c[g[0]] = !c[g[0]]; self.setState({ closed: c }); },
+        items: g[1].map(function (n) {
+          const on = s.screen === n[0] || (n[0] === 'containers' && s.screen === 'container') || (n[0] === 'sales' && s.screen === 'invoice');
+          return { label: n[1], icon: PH + n[2], color: n[3] || '#62c5ee', cls: on ? 'navi on' : 'navi', labelDisplay: rail ? 'none' : 'inline', go: function () { self.go(n[0]); } };
+        })
+      };
+    }).filter(function (g) { return !!g; });
+    const vals = {
+      navGroups: nav, roles: ['Owner', 'Accountant', 'Sales officer'], role: s.role, toast: s.toast,
+      railW: rail ? '62px' : '218px', labelDisplay: labelDisplay, railIcon: PH + (rail ? 'arrow-line-right' : 'arrow-line-left'),
+      toggleRail: function () { self.setState({ rail: !rail }); },
+      crumbTitle: TITLES[s.screen] || 'Portside',
+      goHome: function () { self.go('dash'); }, goContainers: function () { self.go('containers'); }, goSales: function () { self.go('sales'); },
+      setRole: function (e) {
+        const r = e.target.value;
+        const a = ROLE_ACCESS[r];
+        const ok = a === '*' || a.indexOf(s.screen) !== -1 || s.screen === 'invoice' || s.screen === 'container';
+        self.setState({ role: r, screen: ok ? s.screen : 'dash', modal: null, palette: null,
+          toast: 'Signed in as ' + r + ' \u2014 the menu, cost columns and create/edit rights all follow the role.' });
+      },
+      startInvoice: this.startInvoice, openPalette: this.openPalette, saveDraft: this.saveDraft,
+      customerOpts: CUSTOMERS.map(function (c) { return { id: c.id, name: c.name + ' \u2014 ' + c.city }; }),
+      isDash: s.screen === 'dash', isContainer: s.screen === 'container', isInvoice: s.screen === 'invoice', isReports: s.screen === 'reports',
+      isStockEntry: s.screen === 'stockentry', startStockEntry: this.startStockEntry,
+      isPO: s.screen === 'po', hasHelp: s.help === true,
+      openHelp: function () { self.setState({ help: true }); },
+      closeHelp: function () { self.setState({ help: false }); },
+      goStockEntries: function () { self.go('stockentries'); },
+      goPurchases: function () { self.go('purchases'); },
+      isList: ['dash', 'container', 'invoice', 'reports', 'stockentry', 'po'].indexOf(s.screen) === -1
+    };
+    if (vals.isStockEntry) vals.se = this.stockEntryVals();
+    if (vals.isPO) vals.po = this.poVals();
+    if (vals.hasHelp) Object.assign(vals, this.helpVals());
+    Object.assign(vals, this.modalVals(), this.paletteVals());
+    Object.assign(vals, this.dashVals(b, lots, live));
+    if (vals.isContainer) vals.cd = this.containerVals();
+    if (vals.isInvoice) vals.inv = this.invoiceVals();
+    if (vals.isList) Object.assign(vals, this.listVals(b, lots, live));
+    if (vals.isReports) vals.reportGroups = this.reportVals();
+    return vals;
+  }
+
+  poVals() {
+    const self = this;
+    const d = this.state.poDraft || { idx: -1, rec: { id: '\u2014', sup: 'SUP-01', date: '', incoterm: '', terms: '', status: 'Draft', lines: [] } };
+    const rec = d.rec;
+    const rate = this.props.usdRate || RATE;
+    const set = function (kk) { return function (ev) { self.editPoDraft(function (r) { r[kk] = ev.target.value; }); }; };
+    let usd = 0, qty = 0;
+    const lines = rec.lines.map(function (l, i) {
+      usd += l[1] * l[2]; qty += l[1];
+      const setL = function (j) {
+        return function (ev) {
+          const v = Math.max(0, parseFloat(ev.target.value) || 0);
+          self.editPoDraft(function (r) { r.lines = r.lines.map(function (y, k) { const z = y.slice(); if (k === i) z[j] = v; return z; }); });
+        };
+      };
+      return { name: self.item(l[0]).name, code: l[0] + ' \u00b7 ' + self.item(l[0]).uom, qty: String(l[1]), price: String(l[2]),
+        usd: (l[1] * l[2]).toFixed(2), pkr: self.fmt(l[1] * l[2] * rate), setQty: setL(1), setPrice: setL(2),
+        remove: function () { self.editPoDraft(function (r) { r.lines = r.lines.filter(function (y, k) { return k !== i; }); }); } };
+    });
+    return {
+      no: rec.id, isNew: d.idx < 0, sup: rec.sup, date: rec.date, incoterm: rec.incoterm, terms: rec.terms, status: rec.status,
+      supOpts: SUPPLIERS.map(function (s) { return { v: s.id, label: s.id + ' \u2014 ' + s.name }; }),
+      termOpts: ['LC at sight', 'LC 60 days', 'LC 90 days', 'TT 30% advance'].map(function (t) { return { v: t, label: t }; }),
+      statusOpts: ['Draft', 'Ordered', 'Shipped', 'Received'].map(function (t) { return { v: t, label: t }; }),
+      setSup: set('sup'), setDate: set('date'), setIncoterm: set('incoterm'), setTerms: set('terms'), setStatus: set('status'), setId: set('id'),
+      lines: lines, qty: this.fmt(qty), usd: 'USD ' + this.fmt(usd), pkr: this.fmt(usd * rate),
+      save: this.savePO, openPalette: this.openPalette
+    };
+  }
+
+  helpVals() {
+    return { helpGroups: HELP.map(function (g) {
+      const GC = ['#1186ac', '#c27803', '#a80055', '#2f8f6b', '#6d5bd0', '#1186ac'];
+      return { name: g[0], icon: PH + g[1], color: GC[HELP.indexOf(g) % GC.length], rows: g[2].map(function (r) { return { key: r[0], what: r[1] }; }) };
+    }) };
+  }
+
+  stockEntryVals() {
+    const self = this;
+    const d = this.state.stockDraft || { no: this.nextStockNo(), type: 'Adjustment', lines: [] };
+    let value = 0, qty = 0;
+    const receiving = d.type === 'Goods receipt';
+    const lines = d.lines.map(function (l, i) {
+      const cost = self.unitCost(l[1], l[0]);
+      const live = self.isReceived(l[1]);
+      const bal = self.avail(l[1], l[0]);
+      const declared = self.declaredQty(l[1], l[0]);
+      const net = receiving && !live ? l[2] - declared : l[2];
+      value += net * cost; qty += net;
+      const setL = function (j, num) {
+        return function (ev) {
+          const v = num ? (parseFloat(ev.target.value) || 0) : ev.target.value;
+          self.editStockDraft(function (x) { x.lines = x.lines.map(function (y, k) { const z = y.slice(); if (k === i) z[j] = v; return z; }); });
+        };
+      };
+      return { name: self.item(l[0]).name, code: l[0] + ' \u00b7 ' + self.item(l[0]).uom,
+        lot: l[1] + (live ? '' : ' \u2014 receiving, ' + self.fmt(declared) + ' declared'), bal: self.fmt(bal),
+        qty: String(l[2]), reason: l[3], cost: self.fmt(cost), impact: self.fmt(net * cost),
+        newBal: self.fmt(receiving && !live ? l[2] : bal + l[2]), color: net < 0 ? 'var(--color-accent-2)' : 'var(--color-accent-700)',
+        setQty: setL(2, true), setReason: setL(3),
+        remove: function () { self.editStockDraft(function (x) { x.lines = x.lines.filter(function (y, k) { return k !== i; }); }); } };
+    });
+    const lotOpts = [{ v: '', label: 'All received lots' }].concat(this.lots().filter(function (l) { return l.live || receiving; }).map(function (l) {
+      return { v: l.c.id, label: l.c.id + ' \u2014 ' + l.c.status + (l.live ? '' : ' (receiving)') };
+    }));
+    return {
+      no: d.no, type: d.type, lot: d.lot || '', lotOpts: lotOpts,
+      lotNote: d.lot ? 'Lines are restricted to ' + d.lot + ' \u2014 stock always belongs to a container lot.' : 'Pick a container lot to restrict the search, or search across all received lots.',
+      typeOpts: ['Goods receipt', 'Adjustment', 'Damage write-off', 'Opening stock'].map(function (t) { return { v: t, label: t }; }),
+      setType: function (ev) { self.editStockDraft(function (x) { x.type = ev.target.value; }); },
+      setLot: function (ev) { const v = ev.target.value; self.editStockDraft(function (x) { x.lot = v; x.lines = (x.lines || []).filter(function (l) { return !v || l[1] === v; }); }); },
+      lines: lines, hasLines: lines.length > 0,
+      qty: (qty > 0 ? '+' : '') + this.fmt(qty), value: (value > 0 ? '+' : '') + this.fmt(value),
+      post: this.postStockEntry, openPalette: this.openPalette
+    };
+  }
+
+  modalVals() {
+    const self = this;
+    const m = this.state.modal;
+    if (!m) return { modal: null, hasModal: false };
+    const e = this.entity(m.screen);
+    const set = function (k, num) {
+      return function (ev) {
+        const v = num ? (parseFloat(ev.target.value) || 0) : ev.target.value;
+        const mm = Object.assign({}, self.state.modal);
+        mm.draft = Object.assign({}, mm.draft); mm.draft[k] = v;
+        self.setState({ modal: mm });
+      };
+    };
+    const lines = (m.draft.lines || []).map(function (l, i) {
+      const setL = function (j, num) {
+        return function (ev) {
+          const v = num ? (parseFloat(ev.target.value) || 0) : ev.target.value;
+          const mm = Object.assign({}, self.state.modal);
+          mm.draft = Object.assign({}, mm.draft);
+          mm.draft.lines = mm.draft.lines.map(function (x, k) { const y = x.slice(); if (k === i) y[j] = v; return y; });
+          self.setState({ modal: mm });
+        };
+      };
+      return { name: self.item(l[0]).name, code: l[0] + ' \u00b7 ' + self.item(l[0]).uom, qty: String(l[1]), price: String(l[2]), value: self.fmt(l[1] * l[2] * (self.props.usdRate || RATE)),
+        setQty: setL(1, true), setPrice: setL(2, true),
+        remove: function () {
+          const mm = Object.assign({}, self.state.modal);
+          mm.draft = Object.assign({}, mm.draft);
+          mm.draft.lines = mm.draft.lines.filter(function (x, k) { return k !== i; });
+          self.setState({ modal: mm });
+        } };
+    });
+    const fobTotal = (m.draft.lines || []).reduce(function (q, l) { return q + l[1] * l[2]; }, 0);
+    return {
+      hasModal: true,
+      modal: {
+        title: (m.mode === 'new' ? 'New ' : 'Edit ') + e.label.toLowerCase(),
+        sub: m.mode === 'new' ? 'Fields marked with a code are the record key. Enter saves, Esc cancels.' : 'Changes apply to every screen that reads this record.',
+        fields: e.fields.map(function (fd) {
+          const opts = Array.isArray(fd[2]) ? fd[2] : null;
+          return { label: fd[1], value: String(m.draft[fd[0]] == null ? '' : m.draft[fd[0]]), isSelect: !!opts, isText: !opts,
+            options: (opts || []).map(function (o) { return { v: o, label: o }; }), set: set(fd[0], fd[2] === 'num') };
+        }),
+        hasLines: !!e.hasLines, lines: lines,
+        searchItems: function () { self.openPalette('po'); },
+        fobTotal: this.fmt(fobTotal * (this.props.usdRate || RATE)) + ' PKR  (USD ' + this.fmt(fobTotal) + ')',
+        addLine: function () {
+          const mm = Object.assign({}, self.state.modal);
+          mm.draft = Object.assign({}, mm.draft);
+          mm.draft.lines = (mm.draft.lines || []).concat([[ITEMS[0].code, 100, 10]]);
+          self.setState({ modal: mm });
+        },
+        save: this.saveModal,
+        cancel: function () { self.setState({ modal: null }); },
+        canDelete: m.mode === 'edit' && this.canDelete(m.screen),
+        remove: function () { self.removeRec(m.screen, m.idx); self.setState({ modal: null }); }
+      }
+    };
+  }
+
+  paletteVals() {
+    const self = this;
+    const p = this.state.palette;
+    if (!p) return { palette: null, hasPalette: false };
+    const list = this.paletteList();
+    return {
+      hasPalette: true,
+      palette: {
+        q: p.q, count: list.length + ' match' + (list.length === 1 ? '' : 'es'),
+        hint: p.mode === 'po' ? 'Search the item master \u2014 Enter adds an order line at the last FOB price'
+          : p.mode === 'lot' ? 'Search the item master \u2014 Enter adds the item to this container lot'
+          : p.mode === 'stock' ? ((this.state.stockDraft || {}).type === 'Goods receipt' ? 'Search a lot to receive \u2014 Enter adds a receipt line, then enter the counted quantity' : 'Search stock by item or container lot \u2014 Enter adds an adjustment line')
+          : 'Search items in stock \u2014 Enter adds a sales line at the customer\u2019s list price',
+        setQ: function (ev) { self.setState({ palette: { q: ev.target.value, sel: 0, mode: p.mode } }); },
+        close: function () { self.setState({ palette: null }); },
+        rows: list.slice(0, 8).map(function (r, i) {
+          return { name: r.name, meta: r.meta,
+            list: r.right, floor: r.rightSub,
+            bg: i === p.sel ? 'var(--color-accent-100)' : 'transparent',
+            bar: i === p.sel ? 'var(--color-accent)' : 'transparent',
+            add: function () { self.addFromPalette(r); } };
+        })
+      }
+    };
+  }
+
+  dashVals(b, lots, live) {
+    const self = this;
+    const sold = live.map(function (l) {
+      let rev = 0, cogs = 0;
+      self.state.invoices.forEach(function (i) {
+        i.lines.forEach(function (x) { if (x[1] === l.c.id) { rev += x[2] * x[3]; cogs += x[2] * self.unitCost(l.c.id, x[0]); } });
+      });
+      return { id: l.c.id, rev: rev, gp: rev - cogs, landed: l.landed };
+    });
+    const maxGp = Math.max.apply(null, sold.map(function (x) { return x.gp; }).concat([1]));
+    const months = [['May', 0, 0], ['Jun', 0, 0], ['Jul', 0, 0], ['Aug', 0, 0], ['Sep', 0, 0]];
+    this.state.invoices.forEach(function (i) {
+      const m = i.date.slice(3, 6);
+      const row = months.find(function (x) { return x[0] === m; });
+      if (row) { const t = self.invTotals(i); row[1] += t.net; row[2] += t.cogs; }
+    });
+    months[0][1] = 4920000; months[0][2] = 3610000;
+    months[1][1] = 6180000; months[1][2] = 4490000;
+    const maxM = Math.max.apply(null, months.map(function (m) { return m[1]; })) * 1.12;
+
+    // grouped bars + gross-profit line, drawn in a 640x250 viewBox
+    const y0 = 208, top = 24, span = y0 - top;
+    const stepW = 584 / months.length;
+    const bw = 20;
+    const bars = months.map(function (m, i) {
+      const cx = 46 + stepW * (i + 0.5);
+      const h1 = Math.max(2, span * m[1] / maxM), h2 = Math.max(2, span * m[2] / maxM);
+      return { label: m[0], cx: cx, w: bw, x1: cx - bw - 3, y1: y0 - h1, h1: h1, x2: cx + 3, y2: y0 - h2, h2: h2,
+        value: (m[1] / 1e6).toFixed(1), vy: y0 - h1 - 7 };
+    });
+    const dots = months.map(function (m, i) {
+      return { x: 46 + stepW * (i + 0.5), y: y0 - span * (m[1] - m[2]) / maxM };
+    });
+    const grid = [0, 0.25, 0.5, 0.75, 1].map(function (p) {
+      const y = y0 - span * p;
+      return { y: y, ty: y + 3.5, label: (maxM * p / 1e6).toFixed(0) };
+    });
+
+    // inventory donut by container lot
+    const PIE = ['#0088b0', '#d6006c', '#38a6cf', '#f2b21c', '#605d5d'];
+    const lotVals = live.map(function (l, i) {
+      return { id: l.c.id, v: l.rows.reduce(function (q, r) { return q + r.value; }, 0), color: PIE[i % PIE.length], go: function () { self.go('container', { ctr: l.c.id }); } };
+    });
+    const pieTotal = lotVals.reduce(function (q, x) { return q + x.v; }, 0) || 1;
+    const CIRC = 2 * Math.PI * 58;
+    let acc = 0;
+    const arcs = lotVals.map(function (x) {
+      const len = CIRC * x.v / pieTotal;
+      const a = { color: x.color, dash: len.toFixed(1) + ' ' + (CIRC - len).toFixed(1), offset: (-acc).toFixed(1) };
+      acc += len;
+      return a;
+    });
+
+    // aging buckets
+    const buck = [0, 0, 0, 0];
+    this.state.invoices.forEach(function (i) {
+      buck[i.d <= 15 ? 0 : i.d <= 30 ? 1 : i.d <= 45 ? 2 : 3] += self.invTotals(i).gross;
+    });
+    const paidShare = b.recd / (b.gross || 1);
+    const openB = buck.map(function (x) { return x * (1 - paidShare); });
+    const maxB = Math.max.apply(null, openB.concat([1]));
+    const AG = ['0\u201315 d', '16\u201330 d', '31\u201345 d', '46+ d'];
+    const AGC = ['#38a6cf', '#0088b0', '#f2b21c', '#d6006c'];
+
+    return {
+      chart: { grid: grid, bars: bars, dots: dots, gpLine: dots.map(function (d) { return d.x.toFixed(1) + ',' + d.y.toFixed(1); }).join(' ') },
+      donut: { arcs: arcs, total: this.fmtc(pieTotal), legend: lotVals.map(function (x) { return { label: x.id, color: x.color, value: self.fmtc(x.v), go: x.go }; }) },
+      aging: openB.map(function (v, i) { return { label: AG[i], color: AGC[i], value: self.fmtc(v), h: Math.round(64 * v / maxB) + 4 }; }),
+      dashHead: live.length + ' containers landed and selling, ' + (lots.length - live.length) + ' on the water or in clearance.',
+      kStock: this.fmtc(b.stock), kStockSub: this.fmt(live.reduce(function (q, l) { return q + l.rows.reduce(function (t, r) { return t + r.onHand; }, 0); }, 0)) + ' units across ' + live.length + ' container lots',
+      kGP: this.fmtc(b.gp), kGPSub: this.pct(b.gp / b.sales) + ' on net sales of ' + this.fmtc(b.sales),
+      kpis: [
+        { label: 'Inventory on hand', value: this.fmtc(b.stock), sub: live.length + ' lots selling', icon: PH + 'stack', tint: '#e9f8ff', ink: '#006786', go: function () { self.go('stock'); } },
+        { label: 'Net sales YTD', value: this.fmtc(b.sales), sub: this.state.invoices.length + ' invoices', icon: PH + 'receipt', tint: '#fff1f4', ink: '#a80055', go: function () { self.go('sales'); } },
+        { label: 'Gross profit YTD', value: this.fmtc(b.gp), sub: this.pct(b.gp / b.sales) + ' blended margin', icon: PH + 'trend-up', tint: '#fdf3dd', ink: '#8a5b04', go: function () { self.go('profit'); } },
+        { label: 'Receivables', value: this.fmtc(b.ar), sub: 'incl. sales tax', icon: PH + 'hourglass', tint: '#e9f8ff', ink: '#1186ac', go: function () { self.go('receivables'); } },
+        { label: 'Goods in transit', value: this.fmtc(b.inTransit), sub: (lots.length - live.length) + ' containers', icon: PH + 'boat', tint: '#eef3f5', ink: '#0a303e', go: function () { self.go('containers'); } },
+        { label: 'Cost of goods sold', value: this.fmtc(b.cogs), sub: 'on the current basis', icon: PH + 'calculator', tint: '#f2f4ee', ink: '#4a5a2f', go: function () { self.go('profit'); } }
+      ],
+      pipeline: lots.map(function (l) {
+        return { id: l.c.id, supplier: (SUPPLIERS.find(function (x) { return x.id === l.c.sup; }) || {}).name, meta: l.c.size + ' \u00b7 ' + l.c.ctr + ' \u00b7 ' + (l.c.recd ? 'received ' + l.c.recd : 'ETA ' + l.c.eta),
+          status: l.c.status, tagClass: l.c.status === 'Selling' ? 'tag-accent' : l.c.status === 'In clearance' ? 'tag-accent-2' : 'tag-outline',
+          icon: PH + (l.c.status === 'Selling' ? 'package' : l.c.status === 'In clearance' ? 'stamp' : 'boat'),
+          color: l.c.status === 'Selling' ? '#2f8f6b' : l.c.status === 'In clearance' ? '#a80055' : '#c27803',
+          go: function () { self.go('container', { ctr: l.c.id }); } };
+      }),
+      alerts: [
+        { title: 'PSC-2604 duty paid, GD filed \u2014 awaiting delivery order', detail: 'Landed cost worksheet is provisional until port charges post', color: 'var(--color-accent-2)', icon: PH + 'stamp', go: function () { self.go('container', { ctr: 'PSC-2604' }); } },
+        { title: 'Sindh Electric Traders is near its credit limit', detail: 'Balance ' + this.fmtc(this.custBal('C-02')) + ' against a 2.50 M limit', color: 'var(--color-accent-2)', icon: PH + 'warning-diamond', go: function () { self.go('receivables'); } },
+        { title: 'LED panel 36W below reorder level', detail: this.fmt(this.avail('PSC-2602', 'EL-2007')) + ' pcs on hand; 3,200 arriving on PSC-2604', color: 'var(--color-accent-700)', icon: PH + 'arrow-fat-line-down', go: function () { self.go('stock'); } },
+        { title: '2 invoices await owner approval on below-floor pricing', detail: 'Sales officers cannot post under cost + 8%', color: 'var(--color-accent-700)', icon: PH + 'shield-check', go: function () { self.go('roles'); } }
+      ],
+      profitBars: sold.map(function (x) {
+        return { id: x.id, gp: self.fmtc(x.gp), margin: x.rev ? self.pct(x.gp / x.rev) : '\u2014', pct: Math.round(100 * x.gp / maxGp), go: function () { self.go('container', { ctr: x.id }); } };
+      })
+    };
+  }
+
+  containerVals() {
+    const self = this;
+    const l = this.lot(this.state.ctr) || this.lot('PSC-2601');
+    const c = l.c;
+    const sup = SUPPLIERS.find(function (x) { return x.id === c.sup; }) || {};
+    const bl = { v: 'landed value', w: 'gross weight', q: 'unit count' };
+    let rev = 0, cogs = 0;
+    this.state.invoices.forEach(function (i) {
+      i.lines.forEach(function (x) { if (x[1] === c.id) { rev += x[2] * x[3]; cogs += x[2] * self.unitCost(c.id, x[0]); } });
+    });
+    const stockLeft = l.rows.reduce(function (s, r) { return s + r.value; }, 0);
+    const show = this.state.role !== 'Sales officer';
+    return {
+      id: c.id, line: sup.name + ' \u00b7 ' + sup.port + ' \u00b7 ' + c.size + ' \u00b7 ' + c.ctr + ' \u00b7 BL ' + c.bl + ' \u00b7 GD ' + c.gd + ' \u00b7 ' + (c.recd ? 'received ' + c.recd : 'ETA ' + c.eta),
+      stats: [
+        { label: 'FOB value', value: this.fmtc(l.fobTotal), sub: 'at ' + (this.props.usdRate || RATE) + ' PKR/USD' },
+        { label: 'Import costs', value: this.fmtc(l.costTotal), sub: c.costs.length + ' expense heads' },
+        { label: 'Total landed cost', value: this.fmtc(l.landed), sub: this.fmt(l.qty) + ' units \u00b7 ' + this.fmt(l.wt) + ' kg' },
+        { label: 'Sold to date', value: this.fmtc(rev), sub: rev ? this.pct((rev - cogs) / rev) + ' margin' : 'not yet selling' },
+        { label: 'Stock remaining', value: this.fmtc(stockLeft), sub: this.pct(l.landed ? stockLeft / l.landed : 0) + ' of the lot' }
+      ],
+      canEditCost: this.canEdit('containers'),
+      addCost: this.addCostHead,
+      basisCells: [{ v: 'o', label: 'Follow the lot basis' }, { v: 'v', label: 'By landed value' }, { v: 'w', label: 'By gross weight' }, { v: 'q', label: 'By unit count' }],
+      costs: c.costs.map(function (x, i) {
+        const basis = x[2] === 'o' ? self.state.basis.slice(2) : x[2] === 'v' ? 'value' : x[2] === 'w' ? 'weight' : 'quantity';
+        return { head: x[0], basisCode: x[2], basis: 'by ' + (basis === 'value' ? bl.v : basis === 'weight' ? bl.w : bl.q), amount: self.fmt(x[1]), amountRaw: String(x[1]), per: self.fmt(x[1] / l.qty),
+          setHead: function (ev) { self.setCost(i, 'head', ev.target.value); },
+          setAmount: function (ev) { self.setCost(i, 'amount', ev.target.value); },
+          setBasis: function (ev) { self.setCost(i, 'basis', ev.target.value); },
+          remove: function () { self.removeCost(i); } };
+      }),
+      costTotal: this.fmt(l.costTotal), costPer: this.fmt(l.costTotal / l.qty),
+      addItem: function () { self.openPalette('lot'); },
+      items: l.rows.map(function (r, i) {
+        const line = c.lines[i] || [];
+        return { name: self.item(r.code).name, code: r.code + ' \u00b7 ' + self.item(r.code).uom, recd: self.fmt(r.qty), onHand: self.fmt(r.onHand),
+          qtyRaw: String(line[1] == null ? r.qty : line[1]), fobRaw: String(line[2] == null ? '' : line[2]), wtRaw: String(line[3] == null ? '' : line[3]),
+          sold: self.fmt(r.sold),
+          setQty: function (ev) { self.setLotLine(i, 'qty', ev.target.value); },
+          setFob: function (ev) { self.setLotLine(i, 'fob', ev.target.value); },
+          setWt: function (ev) { self.setLotLine(i, 'wt', ev.target.value); },
+          remove: function () { self.removeLotLine(i); },
+          unit: show ? self.fmt(r.unit) : '\u2014', value: show ? self.fmt(r.value) : '\u2014' };
+      }),
+      pl: [
+        { label: 'Revenue realised', sub: 'net of discount, before sales tax', value: this.fmt(rev), weight: '400' },
+        { label: 'Cost of goods sold', sub: 'at frozen landed unit cost', value: '(' + this.fmt(cogs) + ')', weight: '400' },
+        { label: 'Gross profit realised', sub: rev ? this.pct((rev - cogs) / rev) + ' of revenue' : '', value: this.fmt(rev - cogs), weight: '600' },
+        { label: 'Unsold stock at cost', sub: 'carried in inventory', value: this.fmt(stockLeft), weight: '400' },
+        { label: 'Projected profit at list price', sub: 'if remaining stock sells at list', value: this.fmt((rev - cogs) + stockLeft * 0.31), weight: '400' },
+        { label: 'Cash recovered against this lot', sub: 'receipts applied FIFO', value: this.fmt(rev * 0.72), weight: '400' }
+      ],
+      trail: [
+        { date: c.eta, what: 'Purchase order & LC opened with ' + sup.name, who: 'Owner \u00b7 ' + sup.terms, ref: 'PO-' + c.id.slice(4) },
+        { date: c.eta, what: 'Bill of lading received, shipment in transit', who: 'Import desk', ref: c.bl },
+        { date: c.recd || '\u2014', what: 'Goods declaration filed and duty paid', who: 'Clearing agent \u00b7 Al-Noor Logistics', ref: c.gd },
+        { date: c.recd || '\u2014', what: c.recd ? 'Container received and put away at Site A' : 'Awaiting delivery order', who: 'Store keeper', ref: c.recd ? 'GRN-' + c.id.slice(4) : 'pending' },
+        { date: c.recd || '\u2014', what: c.recd ? 'Landed cost worksheet finalised and stock costed' : 'Provisional costing only', who: 'Accountant', ref: c.recd ? 'LC-' + c.id.slice(4) : 'draft' }
+      ],
+      basisOpts: ['o-value', 'o-weight', 'o-quantity'].map(function (k) {
+        return { label: 'Allocate by ' + k.slice(2), cls: self.state.basis === k ? 'btn-primary' : 'btn-secondary',
+          go: function () { self.setState({ basis: k, toast: 'Overhead heads re-allocated by ' + k.slice(2) + ' \u2014 unit costs, stock value and open-stock margins updated. Sold units keep the basis frozen at invoice date.' }); } };
+      })
+    };
+  }
+
+  invoiceVals() {
+    const self = this;
+    const d = this.state.draft || { no: '\u2014', cust: 'C-01', lines: [], pick: '' };
+    const cust = CUSTOMERS.find(function (c) { return c.id === d.cust; }) || CUSTOMERS[0];
+    const t = this.invTotals({ lines: d.lines });
+    const bal = this.custBal(d.cust);
+    const below = d.lines.filter(function (l) { return l[3] < self.floorPrice(l[1], l[0]); });
+    const over = t.gross + bal > cust.limit;
+    const owner = this.state.role === 'Owner';
+    const show = this.state.role !== 'Sales officer' || this.props.salesSeesCost === true;
+    const dash = '\u2014';
+    const opts = this.pickOptions();
+    return {
+      no: d.no, customerId: d.cust, terms: cust.terms + ' \u00b7 ' + cust.salesman, credit: this.fmt(bal) + ' due of ' + this.fmt(cust.limit) + ' limit',
+      setCustomer: function (e) { self.editDraft(function (x) { x.cust = e.target.value; }); },
+      pick: d.pick, pickOpts: [{ id: '', label: 'Select item and container lot\u2026' }].concat(opts),
+      setPick: function (e) { self.editDraft(function (x) { x.pick = e.target.value; }); },
+      addLine: function () {
+        const p = (self.state.draft || {}).pick;
+        if (!p) { self.setState({ toast: 'Choose an item and lot first.' }); return; }
+        const parts = p.split('|');
+        const price = self.tierPrice(parts[1], cust);
+        self.editDraft(function (x) { x.lines = x.lines.concat([[parts[1], parts[0], Math.min(50, self.avail(parts[0], parts[1])), price]]); x.pick = ''; });
+      },
+      lines: d.lines.map(function (l, idx) {
+        const cost = self.unitCost(l[1], l[0]);
+        const gp = l[2] * (l[3] - cost);
+        return {
+          name: self.item(l[0]).name, code: l[0], floor: self.fmt(self.floorPrice(l[1], l[0])), lot: l[1], avail: self.fmt(self.avail(l[1], l[0]) + l[2]) + ' ' + self.item(l[0]).uom,
+          qty: String(l[2]), rate: String(l[3]), cost: show ? self.fmt(cost) : dash, total: self.fmt(l[2] * l[3]),
+          gp: show ? self.fmt(gp) : dash, gpPct: show && l[3] ? self.pct((l[3] - cost) / l[3]) : '',
+          gpColor: l[3] < self.floorPrice(l[1], l[0]) ? 'var(--color-accent-2)' : 'var(--color-text)',
+          setQty: function (e) { const v = Math.max(0, Math.min(self.avail(l[1], l[0]) + l[2], parseInt(e.target.value, 10) || 0)); self.editDraft(function (x) { x.lines = x.lines.map(function (y, j) { return j === idx ? [y[0], y[1], v, y[3]] : y; }); }); },
+          setRate: function (e) { const v = Math.max(0, parseInt(e.target.value, 10) || 0); self.editDraft(function (x) { x.lines = x.lines.map(function (y, j) { return j === idx ? [y[0], y[1], y[2], v] : y; }); }); },
+          remove: function () { self.editDraft(function (x) { x.lines = x.lines.filter(function (y, j) { return j !== idx; }); }); }
+        };
+      }),
+      totals: [
+        { label: 'Net of ' + d.lines.length + ' lines', value: this.fmt(t.net), weight: '400', color: 'inherit' },
+        { label: 'Trade discount ' + cust.disc + '%', value: 'applied in rate', weight: '400', color: 'inherit' },
+        { label: 'Sales tax ' + (this.props.taxRate == null ? 18 : this.props.taxRate) + '%', value: this.fmt(t.tax), weight: '400', color: 'inherit' },
+        { label: 'Invoice total', value: this.fmt(t.gross), weight: '600', color: 'inherit' },
+        { label: show ? 'Cost of goods' : 'Cost of goods (hidden for your role)', value: show ? this.fmt(t.cogs) : dash, weight: '400', color: 'inherit' },
+        { label: show ? 'Gross profit' : 'Gross profit (hidden for your role)', value: show ? this.fmt(t.gp) + (t.net ? '  (' + this.pct(t.gp / t.net) + ')' : '') : dash, weight: '600', color: !show ? 'inherit' : t.gp < 0 ? 'var(--color-accent-2)' : 'var(--color-accent-700)' }
+      ],
+      warning: below.length ? below.length + ' line' + (below.length > 1 ? 's are' : ' is') + ' priced below the cost + 8% floor. ' + (owner ? 'As owner you may override.' : 'A sales officer must route this to the owner.')
+        : over ? 'This invoice takes ' + cust.name + ' past its credit limit \u2014 owner release required.' : '',
+      postLabel: below.length && !owner ? 'Request approval' : below.length ? 'Post with override' : 'Post invoice',
+      postNote: owner ? 'Owner rights include below-floor and over-limit override.' : 'Your role posts at or above floor price only.',
+      post: this.postDraft
+    };
+  }
+
+  reportVals() {
+    const self = this;
+    const G = [
+      ['Import & costing', [['Container landed cost sheet', 'per lot'], ['Expense head analysis', 'by basis'], ['Duty & tax paid register', 'GD-wise'], ['Supplier purchase summary', 'FOB vs landed'], ['Goods in transit', 'as at date']]],
+      ['Inventory', [['Stock on hand valuation', 'lot-wise'], ['Container-wise stock movement', 'in / out / balance'], ['Item ledger', 'full trail'], ['Slow moving & ageing stock', '>90 days'], ['Reorder level exceptions', 'live']]],
+      ['Sales & profitability', [['Sales register', 'date range'], ['Gross profit by invoice', 'cost frozen'], ['Container profitability', 'realised + projected'], ['Item-wise margin analysis', 'top / bottom'], ['Salesman performance', 'target vs actual'], ['Customer-wise sales', 'with discount %']]],
+      ['Receivables & cash', [['Receivables aging', '0/30/60/90+'], ['Customer ledger & statement', 'printable'], ['Receipts register', 'mode-wise'], ['Credit limit exceptions', 'live'], ['Cheque register & clearing', 'status']]],
+      ['Accounting', [['General ledger', 'account-wise'], ['Trial balance', 'as at date'], ['Profit & loss', 'period'], ['Balance sheet', 'as at date'], ['Sales tax return working', 'monthly'], ['Audit trail of edits', 'user-wise']]]
+    ];
+    const GI = ['calculator', 'stack', 'trend-up', 'hand-coins', 'book-open-text'];
+    const GC = ['#1186ac', '#c27803', '#a80055', '#2f8f6b', '#6d5bd0'];
+    return G.map(function (g, gi) {
+      return { name: g[0], icon: PH + GI[gi], iconColor: GC[gi], items: g[1].map(function (r) {
+        return { name: r[0], note: r[1], go: function () { self.setState({ toast: '\u201c' + r[0] + '\u201d would open here with date, container, item, customer and salesman filters, plus Excel and PDF export.' }); } };
+      }) };
+    });
+  }
+
+  listVals(b, lots, live) {
+    const self = this;
+    const f = function (n) { return self.fmt(n); };
+    const C = function (v, o) { return self.cell(v, o); };
+    const cols = function (arr) { return arr.map(function (x) { return typeof x === 'string' ? { label: x, cls: '' } : { label: x[0], cls: 'n' }; }); };
+    const show = this.state.role !== 'Sales officer' || this.props.salesSeesCost === true;
+    const s = this.state.screen;
+    const out = { hasFilters: false, filters: [], hasTotals: false, totals: [], listNote: '', cols: [], rows: [] };
+    const row = function (cells, go) { return { cells: cells, cls: go ? 'rl' : '', go: go || null }; };
+
+    if (s === 'containers' || s === 'costing') {
+      const costing = s === 'costing';
+      Object.assign(out, {
+        listKicker: costing ? 'Import \u00b7 Module 12' : 'Import \u00b7 Module 09',
+        listTitle: costing ? 'Landed costing' : 'Container register',
+        listBlurb: costing ? 'Every import expense head against its container, with the allocated cost per unit on the current basis.' : 'One record per shipment, from purchase order and LC through clearance, receipt and costing.',
+        cols: cols(costing ? ['Container', 'Supplier', ['FOB value'], ['Import costs'], ['Landed cost'], ['Cost per unit'], 'Basis'] : ['Container', 'Supplier / origin', 'BL & GD', 'ETA / received', ['Landed cost'], ['Stock value'], 'Status']),
+        rows: lots.map(function (l) {
+          const sup = SUPPLIERS.find(function (x) { return x.id === l.c.sup; }) || {};
+          const stock = l.rows.reduce(function (q, r) { return q + r.value; }, 0);
+          const tag = l.c.status === 'Selling' ? 'tag-accent' : l.c.status === 'In clearance' ? 'tag-accent-2' : 'tag-outline';
+          const cells = costing
+            ? [C(l.c.id, { b: true, sub: l.c.size }), C(sup.name, { sub: sup.port }), C(f(l.fobTotal), { n: true }), C(f(l.costTotal), { n: true }), C(f(l.landed), { n: true, b: true }), C(show ? f(l.landed / l.qty) : '\u2014', { n: true, sub: show ? 'over ' + f(l.qty) + ' units' : '' }), C(self.state.basis.slice(2), { tag: 'tag-outline' })]
+            : [C(l.c.id, { b: true, sub: l.c.ctr }), C(sup.name, { sub: sup.port }), C(l.c.bl, { sub: 'GD ' + l.c.gd }), C(l.c.recd || l.c.eta, { sub: l.c.recd ? 'received' : 'expected' }), C(f(l.landed), { n: true }), C(l.live ? f(stock) : '\u2014', { n: true }), C(l.c.status, { tag: tag })];
+          return row(cells, function () { self.go('container', { ctr: l.c.id }); });
+        }),
+        hasTotals: true,
+        totals: [{ label: 'Lots on the books', value: String(lots.length) }, { label: 'Total landed cost', value: f(lots.reduce(function (q, l) { return q + l.landed; }, 0)) }, { label: 'Stock value on hand', value: f(b.stock) }, { label: 'Goods in transit', value: f(b.inTransit) }],
+        listNote: 'Click any container for its landed cost worksheet, unit costing and lot P&L.'
+      });
+    } else if (s === 'suppliers') {
+      Object.assign(out, {
+        listKicker: 'Import \u00b7 Module 04', listTitle: 'Suppliers & LCs', listBlurb: 'Supplier master with payment terms, open letters of credit and purchase history.',
+        cols: cols(['Supplier', 'Origin port', 'Terms', ['Containers'], ['Purchases FOB'], ['Open LC'], 'Status']),
+        rows: SUPPLIERS.map(function (sp) {
+          const mine = lots.filter(function (l) { return l.c.sup === sp.id; });
+          const fob = mine.reduce(function (q, l) { return q + l.fobTotal; }, 0);
+          const open = mine.filter(function (l) { return !l.live; }).reduce(function (q, l) { return q + l.fobTotal; }, 0);
+          return row([C(sp.name, { b: true, sub: sp.id }), C(sp.port), C(sp.terms), C(String(mine.length), { n: true }), C(f(fob), { n: true }), C(open ? f(open) : '\u2014', { n: true }), C(open ? 'LC open' : 'Settled', { tag: open ? 'tag-accent-2' : 'tag-neutral' })]);
+        })
+      });
+    } else if (s === 'stock') {
+      const byItem = {};
+      live.forEach(function (l) { l.rows.forEach(function (r) {
+        const k = byItem[r.code] || (byItem[r.code] = { onHand: 0, value: 0, lots: 0, recd: 0, sold: 0, adj: 0 });
+        k.onHand += r.onHand; k.value += r.value; k.recd += r.qty; k.sold += r.sold; k.adj += r.adj; if (r.onHand > 0) k.lots++;
+      }); });
+      Object.assign(out, {
+        listKicker: 'Inventory \u00b7 Module 21', listTitle: 'Stock on hand', listBlurb: 'Item-level balances rolled up across container lots, valued at landed cost on the current allocation basis.',
+        cols: cols(['Item', 'Category', ['Received'], ['Sold'], ['Adjustments'], ['On hand'], ['Avg unit cost'], ['Stock value'], 'Lots']),
+        rows: Object.keys(byItem).map(function (code) {
+          const k = byItem[code];
+          const it = self.item(code);
+          const low = k.onHand < 400;
+          return row([C(it.name, { b: true, sub: code + ' \u00b7 ' + it.uom }), C(it.cat), C(f(k.recd), { n: true }), C(f(k.sold), { n: true }), C(k.adj ? (k.adj > 0 ? '+' : '') + f(k.adj) : '\u2014', { n: true }), C(f(k.onHand), { n: true, b: true }), C(show ? f(k.value / (k.onHand || 1)) : '\u2014', { n: true }), C(show ? f(k.value) : '\u2014', { n: true }), C(low ? 'reorder' : String(k.lots) + ' lots', { tag: low ? 'tag-accent-2' : 'tag-outline' })]);
+        }),
+        hasTotals: true, totals: [{ label: 'Inventory value', value: f(b.stock) }, { label: 'Distinct items', value: String(Object.keys(byItem).length) }],
+        listNote: 'Costs move when the allocation basis changes on a container \u2014 open a lot to switch basis and watch this valuation follow.'
+      });
+    } else if (s === 'lotstock') {
+      const rows = [];
+      live.forEach(function (l) { l.rows.forEach(function (r) {
+        rows.push(row([C(l.c.id, { b: true, sub: l.c.recd }), C(self.item(r.code).name, { sub: r.code }), C(f(r.qty), { n: true }), C(f(r.sold), { n: true }), C(r.adj ? (r.adj > 0 ? '+' : '') + f(r.adj) : '\u2014', { n: true }), C(f(r.onHand), { n: true, b: true }), C(show ? f(r.unit) : '\u2014', { n: true }), C(show ? f(r.value) : '\u2014', { n: true }), C(self.pct(r.qty ? r.sold / r.qty : 0), { n: true })],
+          function () { self.go('container', { ctr: l.c.id }); }));
+      }); });
+      Object.assign(out, {
+        listKicker: 'Inventory \u00b7 Module 24', listTitle: 'Container-wise stock', listBlurb: 'The same physical item held at different landed costs in different lots \u2014 the reason stock is tracked lot by lot, not just by item.',
+        cols: cols(['Container', 'Item', ['Received'], ['Sold'], ['Adjustments'], ['On hand'], ['Unit cost'], ['Stock value'], ['Sell-through']]), rows: rows,
+        hasTotals: true, totals: [{ label: 'Lot rows', value: String(rows.length) }, { label: 'Value on hand', value: f(b.stock) }]
+      });
+    } else if (s === 'items') {
+      Object.assign(out, {
+        listKicker: 'Masters \u00b7 Module 02', listTitle: 'Item master', listBlurb: 'Codes, units of measure, category and reorder levels. Prices are never held here \u2014 they come from the customer price list.',
+        cols: cols(['Code', 'Description', 'Category', 'UoM', ['Reorder level'], ['On hand'], 'Lots holding stock']),
+        rows: ITEMS.map(function (it) {
+          let onHand = 0; const ls = [];
+          live.forEach(function (l) { l.rows.forEach(function (r) { if (r.code === it.code && r.onHand > 0) { onHand += r.onHand; ls.push(l.c.id); } }); });
+          return row([C(it.code, { b: true }), C(it.name), C(it.cat), C(it.uom), C('400', { n: true }), C(f(onHand), { n: true }), C(ls.join(', ') || '\u2014')]);
+        })
+      });
+    } else if (s === 'sales') {
+      const fl = ['All', 'Al-Madina Hardware', 'Sindh Electric Traders', 'Gulf Tools & Machinery', 'Pak Plumbing Mart'];
+      Object.assign(out, {
+        listKicker: 'Sales \u00b7 Module 31', listTitle: 'Sales invoices', listBlurb: 'Each invoice issues stock from named container lots, so cost of goods and margin are exact rather than averaged.',
+        hasFilters: true,
+        filters: fl.map(function (x) { return { label: x, cls: self.state.filter === x ? 'btn-primary' : 'btn-secondary', go: function () { self.setState({ filter: x }); } }; }),
+        cols: cols(['Invoice', 'Customer', 'Lots issued', ['Net'], ['Sales tax'], ['Total'], ['Cost'], ['Gross profit'], 'Status']),
+        rows: this.state.invoices.slice().reverse().filter(function (i) {
+          const c = CUSTOMERS.find(function (x) { return x.id === i.cust; });
+          return self.state.filter === 'All' || c.name === self.state.filter;
+        }).map(function (i) {
+          const t = self.invTotals(i);
+          const c = CUSTOMERS.find(function (x) { return x.id === i.cust; });
+          const lotIds = i.lines.map(function (l) { return l[1]; }).filter(function (v, k, a) { return a.indexOf(v) === k; });
+          const paid = i.d === 0 ? 'Posted today' : i.d > 30 ? 'Overdue' : 'Open';
+          return row([C(i.no, { b: true, sub: i.date }), C(c.name, { sub: c.city + ' \u00b7 ' + c.terms }), C(lotIds.join(', '), { sub: i.lines.length + ' lines' }), C(f(t.net), { n: true }), C(f(t.tax), { n: true }), C(f(t.gross), { n: true, b: true }), C(show ? f(t.cogs) : '\u2014', { n: true }), C(show ? f(t.gp) + ' \u00b7 ' + self.pct(t.gp / t.net) : '\u2014', { n: true }), C(paid, { tag: paid === 'Overdue' ? 'tag-accent-2' : 'tag-accent' })]);
+        }),
+        hasTotals: true, totals: [{ label: 'Net sales', value: f(b.sales) }, { label: 'Cost of goods sold', value: f(b.cogs) }, { label: 'Gross profit', value: f(b.gp) + '  (' + this.pct(b.gp / b.sales) + ')' }],
+        listNote: 'Use \u201cNew invoice\u201d above to post one: pick a lot, set a rate, and watch the floor-price check, gross profit and ledger postings react.'
+      });
+    } else if (s === 'pricing') {
+      ITEMS.forEach(function (it) { self.priceRec(it.code); });
+      Object.assign(out, {
+        listKicker: 'Sales \u00b7 Module 28', listTitle: 'Customer price lists', listBlurb: 'Enter the list price and the approval floor per item; tier discounts derive each customer group\u2019s rate. New invoice lines and the item search palette pick these prices up immediately.',
+        cols: cols(['Item', ['Avg landed cost'], ['List price'], ['Floor'], ['Tier B'], ['Tier C'], ['Tier D'], ['Margin at list']]),
+        rows: PRICELIST.map(function (p) {
+          const it = self.item(p.code);
+          let cost = 0, n = 0;
+          live.forEach(function (l) { l.rows.forEach(function (r) { if (r.code === p.code) { cost += r.unit; n++; } }); });
+          cost = n ? cost / n : 0;
+          const margin = p.list ? (p.list - cost) / p.list : 0;
+          return row([C(it.name, { b: true, sub: p.code + ' \u00b7 ' + it.uom }), C(show && cost ? f(cost) : '\u2014', { n: true }), C(f(p.list), { n: true, b: true }),
+            C(cost ? f(cost * (1 + p.floor / 100)) : '\u2014', { n: true, sub: 'cost + ' + p.floor + '%' }),
+            C(f(Math.round(p.list * (1 - p.b / 100) / 5) * 5), { n: true, sub: '\u2212' + p.b + '%' }),
+            C(f(Math.round(p.list * (1 - p.c / 100) / 5) * 5), { n: true, sub: '\u2212' + p.c + '%' }),
+            C(f(Math.round(p.list * (1 - p.d / 100) / 5) * 5), { n: true, sub: '\u2212' + p.d + '%' }),
+            C(show && cost ? self.pct(margin) : '\u2014', { n: true })]);
+        }),
+        listNote: 'A sales officer pricing under the floor can only request approval; the owner can override at posting time.'
+      });
+    } else if (s === 'stockentries') {
+      const entries = this.state.stockEntries || [];
+      const TT = { 'Goods receipt': 'tag-accent', 'Adjustment': 'tag-outline', 'Damage write-off': 'tag-accent-2', 'Opening stock': 'tag-neutral' };
+      Object.assign(out, {
+        listKicker: 'Inventory \u00b7 Module 26', listTitle: 'Stock entry register', listBlurb: 'Goods receipts, physical-count adjustments and write-offs. Every posted entry moves on-hand balances and lot valuation immediately.',
+        cols: cols(['Entry', 'Date', 'Type', 'Lines', ['Net qty'], ['Value impact'], 'Posted by']),
+        rows: entries.slice().reverse().map(function (e) {
+          const qty = e.lines.reduce(function (q, l) { return q + l[2]; }, 0);
+          const detail = e.lines.map(function (l) { return self.item(l[0]).name + ' ' + (l[2] > 0 ? '+' : '') + l[2] + ' (' + l[1] + ')'; }).join(', ');
+          return row([C(e.no, { b: true }), C(e.date), C(e.type, { tag: TT[e.type] || 'tag-neutral' }), C(String(e.lines.length) + ' line' + (e.lines.length > 1 ? 's' : ''), { sub: detail }),
+            C((qty > 0 ? '+' : '') + f(qty), { n: true, b: true }), C((e.value > 0 ? '+' : '') + f(e.value), { n: true }), C(e.by)]);
+        }),
+        hasTotals: true,
+        totals: [{ label: 'Entries posted', value: String(entries.length) },
+          { label: 'Net value impact', value: f(entries.reduce(function (q, e) { return q + e.value; }, 0)) },
+          { label: 'Inventory on hand now', value: f(b.stock) }],
+        newShow: this.canEdit('stockentries'), newLabel: 'New stock entry', newGo: this.startStockEntry,
+        listNote: entries.length ? 'Open Stock on hand or any container lot to see the effect of these entries.' : 'Nothing posted yet \u2014 raise an entry, press F2 to search stock, then give each line a signed quantity.'
+      });
+    } else if (s === 'customers') {
+      Object.assign(out, {
+        listKicker: 'Masters \u00b7 Module 03', listTitle: 'Customers', listBlurb: 'Credit terms, limits, standing discount and the salesman who owns the account.',
+        cols: cols(['Customer', 'City', 'Terms', 'Salesman', ['Discount'], ['Credit limit'], ['Balance due'], ['Limit used']]),
+        rows: CUSTOMERS.map(function (c) {
+          const bal = self.custBal(c.id);
+          const used = bal / c.limit;
+          return row([C(c.name, { b: true, sub: c.id }), C(c.city), C(c.terms), C(c.salesman), C(c.disc + '%', { n: true }), C(f(c.limit), { n: true }), C(f(bal), { n: true, b: true }), C(self.pct(used), { tag: used > 0.85 ? 'tag-accent-2' : 'tag-neutral' })]);
+        }),
+        hasTotals: true, totals: [{ label: 'Total receivable', value: f(b.ar) }, { label: 'Credit extended', value: f(CUSTOMERS.reduce(function (q, c) { return q + c.limit; }, 0)) }]
+      });
+    } else if (s === 'receivables') {
+      const buck = [0, 0, 0, 0];
+      this.state.invoices.forEach(function (i) {
+        const g = self.invTotals(i).gross;
+        buck[i.d <= 15 ? 0 : i.d <= 30 ? 1 : i.d <= 45 ? 2 : 3] += g;
+      });
+      Object.assign(out, {
+        listKicker: 'Finance \u00b7 Module 44', listTitle: 'Receivables & aging', listBlurb: 'Balance per account with aging buckets, credit-limit headroom and one-click receipt entry.',
+        cols: cols(['Customer', 'Terms', ['Invoiced'], ['Received'], ['Balance'], ['Oldest'], ['Headroom'], 'Action']),
+        rows: CUSTOMERS.map(function (c) {
+          let inv = 0, oldest = 0;
+          self.state.invoices.forEach(function (i) { if (i.cust === c.id) { inv += self.invTotals(i).gross; oldest = Math.max(oldest, i.d); } });
+          const recd = self.state.receipts.filter(function (r) { return r.cust === c.id; }).reduce(function (q, r) { return q + r.amt; }, 0);
+          const bal = inv - recd;
+          return row([C(c.name, { b: true, sub: c.city }), C(c.terms), C(f(inv), { n: true }), C(f(recd), { n: true }), C(f(bal), { n: true, b: true }), C(oldest ? oldest + ' days' : '\u2014', { n: true }), C(f(c.limit - bal), { n: true }), C('', { action: function () { self.receive(c.id); }, actionLabel: 'Receive 60%' })]);
+        }),
+        hasTotals: true,
+        totals: [{ label: '0\u201315 days', value: f(buck[0]) }, { label: '16\u201330 days', value: f(buck[1]) }, { label: '31\u201345 days', value: f(buck[2]) }, { label: '46+ days', value: f(buck[3]) }, { label: 'Total due', value: f(b.ar) }],
+        listNote: 'Receipts post to bank and clear the receivable in the same batch; the aging buckets above rebuild immediately.'
+      });
+    } else if (s === 'receipts') {
+      Object.assign(out, {
+        listKicker: 'Finance \u00b7 Module 47', listTitle: 'Receipts', listBlurb: 'Cash and cheque receipts, applied oldest-invoice-first against each account.',
+        cols: cols(['Voucher', 'Date', 'Customer', 'Mode', ['Amount'], 'Applied to', 'Status']),
+        rows: this.state.receipts.slice().reverse().map(function (r) {
+          const c = CUSTOMERS.find(function (x) { return x.id === r.cust; });
+          return row([C(r.no, { b: true }), C(r.date), C(c.name), C(r.mode), C(f(r.amt), { n: true, b: true }), C('FIFO against open invoices'), C(r.mode.indexOf('Cheque') === 0 ? 'Cleared' : 'Realised', { tag: 'tag-accent' })]);
+        }),
+        hasTotals: true, totals: [{ label: 'Received YTD', value: f(b.recd) }, { label: 'Still outstanding', value: f(b.ar) }]
+      });
+    } else if (s === 'gl' || s === 'tb') {
+      const acc = [
+        ['1100', 'Bank \u2014 Meezan current', b.recd, 0],
+        ['1200', 'Trade receivables', b.gross, b.recd],
+        ['1300', 'Inventory \u2014 container lots', b.stock + b.cogs, b.cogs],
+        ['1310', 'Goods in transit', b.inTransit, 0],
+        ['1400', 'Sales tax input (import)', b.tax * 0.64, 0],
+        ['2100', 'Trade payables \u2014 suppliers', 0, b.stock * 0.35],
+        ['2200', 'Sales tax output', 0, b.tax],
+        ['3100', 'Owner capital & retained', 0, b.stock * 0.9 + b.inTransit * 0.6],
+        ['4100', 'Sales revenue', 0, b.sales],
+        ['5100', 'Cost of goods sold', b.cogs, 0],
+        ['5200', 'Import & clearing expenses', 0, 0],
+        ['6100', 'Operating expenses', b.sales * 0.07, 0]
+      ];
+      const dr = acc.reduce(function (q, a) { return q + a[2]; }, 0);
+      const cr = acc.reduce(function (q, a) { return q + a[3]; }, 0);
+      if (s === 'tb') {
+        Object.assign(out, {
+          listKicker: 'Accounting \u00b7 Module 58', listTitle: 'Trial balance', listBlurb: 'As at 14 September 2026. Every stock, sales and receipt document above posted here automatically \u2014 no separate accounting entry.',
+          cols: cols(['Code', 'Account', ['Debit'], ['Credit'], ['Net']]),
+          rows: acc.map(function (a) { return row([C(a[0], { b: true }), C(a[1]), C(a[2] ? f(a[2]) : '\u2014', { n: true }), C(a[3] ? f(a[3]) : '\u2014', { n: true }), C(f(a[2] - a[3]), { n: true })]); }),
+          hasTotals: true, totals: [{ label: 'Total debits', value: f(dr) }, { label: 'Total credits', value: f(cr) }, { label: 'Difference', value: f(Math.abs(dr - cr)) + ' (suspense)' }],
+          listNote: 'Suspense holds the opening-balance difference in this prototype; a live system would carry forward last year\u2019s closing balances.'
+        });
+      } else {
+        const je = [];
+        this.state.invoices.slice().reverse().forEach(function (i) {
+          const t = self.invTotals(i);
+          const c = CUSTOMERS.find(function (x) { return x.id === i.cust; });
+          je.push(['JV-S-' + i.no.slice(4), i.date, 'Sales invoice ' + i.no + ' \u2014 ' + c.name, '1200 Trade receivables', t.gross, 0]);
+          je.push(['', '', '', '4100 Sales revenue', 0, t.net]);
+          je.push(['', '', '', '2200 Sales tax output', 0, t.tax]);
+          je.push(['', '', '', '5100 Cost of goods sold', t.cogs, 0]);
+          je.push(['', '', '', '1300 Inventory \u2014 lot issue', 0, t.cogs]);
+        });
+        this.state.receipts.slice().reverse().forEach(function (r) {
+          const c = CUSTOMERS.find(function (x) { return x.id === r.cust; });
+          je.push(['JV-R-' + r.no.slice(3), r.date, 'Receipt ' + r.no + ' \u2014 ' + c.name, '1100 Bank \u2014 Meezan', r.amt, 0]);
+          je.push(['', '', '', '1200 Trade receivables', 0, r.amt]);
+        });
+        Object.assign(out, {
+          listKicker: 'Accounting \u00b7 Module 55', listTitle: 'General ledger', listBlurb: 'The double-entry batch written by each document. Nothing here is keyed by hand.',
+          cols: cols(['Voucher', 'Date', 'Narration', 'Account', ['Debit'], ['Credit']]),
+          rows: je.slice(0, 42).map(function (j) { return row([C(j[0], { b: !!j[0] }), C(j[1]), C(j[2]), C(j[3]), C(j[4] ? f(j[4]) : '', { n: true }), C(j[5] ? f(j[5]) : '', { n: true })]); }),
+          hasTotals: true, totals: [{ label: 'Vouchers', value: String(this.state.invoices.length + this.state.receipts.length) }, { label: 'Debits posted', value: f(b.gross + b.cogs + b.recd) }],
+          listNote: 'Post a new invoice or record a receipt and its voucher appears at the top of this ledger.'
+        });
+      }
+    } else if (s === 'profit') {
+      Object.assign(out, {
+        listKicker: 'Finance \u00b7 Module 51', listTitle: 'Container profitability', listBlurb: 'Realised profit on what has sold, plus the profit still sitting in unsold stock at list price.',
+        cols: cols(['Container', ['Landed cost'], ['Revenue'], ['COGS'], ['Realised GP'], ['Margin'], ['Unsold at cost'], ['Sell-through']]),
+        rows: lots.map(function (l) {
+          let rev = 0, cogs = 0;
+          self.state.invoices.forEach(function (i) { i.lines.forEach(function (x) { if (x[1] === l.c.id) { rev += x[2] * x[3]; cogs += x[2] * self.unitCost(l.c.id, x[0]); } }); });
+          const stock = l.rows.reduce(function (q, r) { return q + r.value; }, 0);
+          return row([C(l.c.id, { b: true, sub: l.c.status }), C(f(l.landed), { n: true }), C(rev ? f(rev) : '\u2014', { n: true }), C(cogs ? f(cogs) : '\u2014', { n: true }), C(rev ? f(rev - cogs) : '\u2014', { n: true, b: true }), C(rev ? self.pct((rev - cogs) / rev) : '\u2014', { n: true }), C(l.live ? f(stock) : 'in transit', { n: true }), C(l.live ? self.pct(1 - stock / l.landed) : '\u2014', { n: true })],
+            function () { self.go('container', { ctr: l.c.id }); });
+        }),
+        hasTotals: true, totals: [{ label: 'Realised gross profit', value: f(b.gp) }, { label: 'Blended margin', value: this.pct(b.gp / b.sales) }, { label: 'Stock still to sell', value: f(b.stock) }]
+      });
+    } else if (s === 'purchases') {
+      const rate = this.props.usdRate || RATE;
+      const tags = { Draft: 'tag-neutral', Ordered: 'tag-accent', Shipped: 'tag-outline', Received: 'tag-accent-2' };
+      Object.assign(out, {
+        listKicker: 'Purchasing \u00b7 Module 07', listTitle: 'Purchase orders', listBlurb: 'Raise an order on a supplier, track it to shipment, then receive it \u2014 receiving creates the container lot and its opening landed-cost worksheet.',
+        cols: cols(['PO', 'Supplier', 'Incoterm / terms', ['Lines'], ['Qty'], ['FOB value'], 'Container', 'Status']),
+        rows: PURCHASES.slice().reverse().map(function (po) {
+          const sup = SUPPLIERS.find(function (x) { return x.id === po.sup; }) || {};
+          const qty = po.lines.reduce(function (q, l) { return q + l[1]; }, 0);
+          const fob = po.lines.reduce(function (q, l) { return q + l[1] * l[2]; }, 0) * rate;
+          return { cells: [C(po.id, { b: true, sub: po.date }), C(sup.name, { sub: sup.port }), C(po.incoterm, { sub: po.terms }), C(String(po.lines.length), { n: true }), C(f(qty), { n: true }), C(f(fob), { n: true, b: true }),
+            C(po.ctr || '\u2014', { sub: po.ctr ? 'lot created' : 'not yet received' }), C(po.status, { tag: tags[po.status] })], cls: '', go: null };
+        }),
+        hasTotals: true,
+        totals: [{ label: 'Open orders', value: String(PURCHASES.filter(function (p) { return p.status !== 'Received'; }).length) },
+          { label: 'Open FOB commitment', value: f(PURCHASES.filter(function (p) { return p.status !== 'Received'; }).reduce(function (q, p) { return q + p.lines.reduce(function (t, l) { return t + l[1] * l[2]; }, 0); }, 0) * rate) },
+          { label: 'Received this year', value: String(PURCHASES.filter(function (p) { return p.status === 'Received'; }).length) }],
+        listNote: 'Press / to raise a new order. Order lines carry item, quantity and FOB unit price in USD; the landed cost is built later against the container.'
+      });
+    } else if (s === 'roles') {
+      const R = [
+        ['Owner', 'Everything, including overrides', 'Yes', 'Yes', 'Yes', 'Yes'],
+        ['Accountant', 'Costing, ledger, receipts, reports', 'Yes', 'No', 'Yes', 'Yes'],
+        ['Sales officer', 'Invoices at or above floor price', 'No', 'No', 'No', 'Own customers'],
+        ['Store keeper', 'Receipts of goods, put-away, counts', 'No', 'No', 'No', 'No'],
+        ['Import desk', 'Containers, documents, clearing costs', 'Yes', 'No', 'No', 'No'],
+        ['Auditor (read only)', 'Views everything, changes nothing', 'No', 'No', 'No', 'Yes']
+      ];
+      Object.assign(out, {
+        listKicker: 'Administration \u00b7 Module 71', listTitle: 'Roles & approvals', listBlurb: 'Who may see cost, who may price below the floor, and what needs the owner\u2019s release. Switch role in the header to feel the difference.',
+        cols: cols(['Role', 'Scope', 'Sees unit cost', 'Below-floor pricing', 'Posts to ledger', 'Reports']),
+        rows: R.map(function (r) {
+          return row([C(r[0], { b: true, sub: r[0] === self.state.role ? 'current session' : '' }), C(r[1]), C(r[2], { tag: r[2] === 'Yes' ? 'tag-accent' : 'tag-neutral' }), C(r[3], { tag: r[3] === 'Yes' ? 'tag-accent-2' : 'tag-neutral' }), C(r[4], { tag: r[4] === 'Yes' ? 'tag-accent' : 'tag-neutral' }), C(r[5])]);
+        }),
+        listNote: 'Approval queue: below-floor prices, over-limit credit, cost edits after posting, and any backdated document all route to the owner with the requester, reason and full before/after values kept in the audit trail.'
+      });
+    }
+
+    // generic CRUD affordances for master/document screens
+    const ent = this.entity(s);
+    if (ent) {
+      const canE = this.canEdit(s), canD = this.canDelete(s);
+      out.newShow = canE;
+      out.newLabel = 'New ' + ent.label.toLowerCase();
+      out.newGo = this.openNew;
+      out.cols = out.cols.concat([{ label: 'Actions', cls: 'n' }]);
+      const reversed = s === 'purchases';
+      out.rows = out.rows.map(function (r, i) {
+        const idx = reversed ? ent.list.length - 1 - i : i;
+        const acts = [];
+        if (canE) acts.push({ label: 'Edit', cls: 'btn-secondary', fn: function (ev) { if (ev) ev.stopPropagation(); self.openEdit(s, idx); } });
+        if (s === 'purchases' && canE && ent.list[idx].status !== 'Received') acts.push({ label: 'Receive', cls: 'btn-primary', fn: function (ev) { if (ev) ev.stopPropagation(); self.receivePO(idx); } });
+        if (canD) acts.push({ label: 'Delete', cls: 'btn-ghost', fn: function (ev) { if (ev) ev.stopPropagation(); self.removeRec(s, idx); } });
+        if (!acts.length) acts.push({ label: 'View only', cls: 'btn-ghost', fn: function (ev) { if (ev) ev.stopPropagation(); self.setState({ toast: 'Your role has read-only access to this register.' }); } });
+        r.cells = r.cells.concat([self.cell('', { n: true, actions: acts })]);
+        return r;
+      });
+      if (!canE) out.listNote = (out.listNote ? out.listNote + ' ' : '') + 'Signed in as ' + this.state.role + ', this register is read-only \u2014 create and edit rights sit with ' + (EDIT_RIGHTS[s] || ['Owner']).join(', ') + '.';
+    }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

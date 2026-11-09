@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/broadsheet-67ad39fe-20f3-40f1-a9cd-63801a5e4a91/styles.css">
+<script src="_ds/broadsheet-67ad39fe-20f3-40f1-a9cd-63801a5e4a91/_ds_bundle.js"></script>
+<style>
+  body { margin: 0; }
+  a { color: var(--color-accent); }
+  a:hover { color: var(--color-accent-600); }
+  .table td.n, .table th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .rl { cursor: pointer; }
+  .rl:hover { background: color-mix(in srgb, var(--color-accent) 6%, transparent); }
+  .muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+  .kick { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent); }
+  .lbl { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 52%, transparent); }
+</style>
+</helmet>
+<div style="display:flex;align-items:flex-start;min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)">
+
+  <aside style="width:212px;flex:none;padding:28px 18px 40px 28px;position:sticky;top:0;height:100vh;overflow-y:auto;box-sizing:border-box">
+    <div onClick="{{ goHome }}" class="rl" style="font-family:var(--font-heading);font-weight:600;font-size:22px;letter-spacing:-0.02em;line-height:1">Portside</div>
+    <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);margin-bottom:26px">Import &middot; Stock &middot; Ledger</div>
+    <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="6">
+      <div style="margin-bottom:20px">
+        <div class="lbl" style="margin-bottom:5px">{{ g.name }}</div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <sc-for list="{{ g.items }}" as="n" hint-placeholder-count="4">
+            <div onClick="{{ n.go }}" role="button" tabindex="0" style="cursor:pointer;font-size:14px;line-height:1.4;color:{{ n.color }};font-weight:{{ n.weight }}" style-hover="color:var(--color-accent-600)">{{ n.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </aside>
+
+  <main style="flex:1;min-width:0;padding:28px 40px 90px 14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:26px">
+      <div class="muted" style="font-size:12px;letter-spacing:0.05em;text-transform:uppercase">Karachi &middot; 14 Sep 2026 &middot; FY 2026&ndash;27 &middot; PKR</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="lbl">Signed in as</span>
+        <select class="input" style="width:auto;padding:5px 9px;font-size:13px" value="{{ role }}" onChange="{{ setRole }}">
+          <sc-for list="{{ roles }}" as="r" hint-placeholder-count="3"><option value="{{ r }}">{{ r }}</option></sc-for>
+        </select>
+        <button class="btn btn-primary" onClick="{{ startInvoice }}">New invoice</button>
+      </div>
+    </div>
+
+    <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+      <div style="border-left:3px solid var(--color-accent-2);padding:8px 14px;margin-bottom:22px;font-size:14px;background:color-mix(in srgb, var(--color-accent-2) 7%, transparent)">{{ toast }}</div>
+    </sc-if>
+
+    <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div class="kick" style="margin-bottom:6px">Management dashboard</div>
+        <h1 style="font-size:42px;max-width:17em;margin:0 0 30px">{{ dashHead }}</h1>
+
+        <div style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-end;margin-bottom:44px">
+          <div>
+            <div class="lbl" style="margin-bottom:10px">Inventory on hand</div>
+            <div class="cmyk-num" style="font-family:var(--font-heading);font-weight:600;font-size:58px;line-height:1">
+              <span class="paper">{{ kStock }}</span>
+              <span class="plate plate-c" aria-hidden="true">{{ kStock }}</span>
+              <span class="plate plate-m" aria-hidden="true">{{ kStock }}</span>
+              <span class="plate plate-y" aria-hidden="true">{{ kStock }}</span>
+            </div>
+            <div class="muted" style="font-size:13px;margin-top:10px">{{ kStockSub }}</div>
+          </div>
+          <div>
+            <div class="lbl" style="margin-bottom:10px">Gross profit, year to date</div>
+            <div style="font-family:var(--font-heading);font-weight:600;font-size:40px;line-height:1">{{ kGP }}</div>
+            <div class="muted" style="font-size:13px;margin-top:8px">{{ kGPSub }}</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:26px 24px;margin-bottom:52px">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+            <div onClick="{{ k.go }}" class="rl">
+              <div class="lbl" style="margin-bottom:4px">{{ k.label }}</div>
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:25px;line-height:1.1;font-variant-numeric:tabular-nums">{{ k.value }}</div>
+              <div class="muted" style="font-size:12px">{{ k.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:52px 44px">
+          <div>
+            <h4 style="margin:0 0 18px">Net sales by month</h4>
+            <div style="display:flex;align-items:flex-end;gap:16px;height:150px">
+              <sc-for list="{{ monthBars }}" as="b" hint-placeholder-count="5">
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;height:100%">
+                  <div class="muted" style="font-size:11px;text-align:center;font-variant-numeric:tabular-nums">{{ b.value }}</div>
+                  <div style="height:{{ b.h }}px;background:var(--color-accent)"></div>
+                  <div style="font-size:11px;text-align:center;letter-spacing:0.05em;text-transform:uppercase">{{ b.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <h4 style="margin:0 0 18px">Import pipeline</h4>
+            <div style="display:flex;flex-direction:column;gap:13px">
+              <sc-for list="{{ pipeline }}" as="p" hint-placeholder-count="5">
+                <div onClick="{{ p.go }}" class="rl" style="display:flex;align-items:baseline;gap:12px">
+                  <div style="font-family:var(--font-heading);font-weight:600;font-size:15px;width:96px;flex:none">{{ p.id }}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:14px">{{ p.supplier }}</div>
+                    <div class="muted" style="font-size:12px">{{ p.meta }}</div>
+                  </div>
+                  <span class="tag {{ p.tagClass }}">{{ p.status }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <h4 style="margin:0 0 18px">Attention required</h4>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+                <div onClick="{{ a.go }}" class="rl" style="display:flex;gap:11px;align-items:baseline">
+                  <span style="color:{{ a.color }};font-size:17px;line-height:1.2">&bull;</span>
+                  <div>
+                    <div style="font-size:14px">{{ a.title }}</div>
+                    <div class="muted" style="font-size:12px">{{ a.detail }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <h4 style="margin:0 0 18px">Profit by container</h4>
+            <div style="display:flex;flex-direction:column;gap:13px">
+              <sc-for list="{{ profitBars }}" as="b" hint-placeholder-count="4">
+                <div onClick="{{ b.go }}" class="rl">
+                  <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>{{ b.id }} &middot; {{ b.margin }} margin</span><span style="font-variant-numeric:tabular-nums">{{ b.gp }}</span></div>
+                  <div style="height:7px;background:color-mix(in srgb, var(--color-text) 10%, transparent)"><div style="height:7px;width:{{ b.pct }}%;background:var(--color-accent-2)"></div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div class="kick" style="margin-bottom:6px">{{ listKicker }}</div>
+        <h1 style="margin:0 0 8px">{{ listTitle }}</h1>
+        <p class="muted" style="font-size:15px;max-width:44em;margin:0 0 26px">{{ listBlurb }}</p>
+
+        <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+            <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+              <button class="btn {{ f.cls }}" style="padding:5px 12px;font-size:13px" onClick="{{ f.go }}">{{ f.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div style="overflow-x:auto">
+          <table class="table">
+            <thead><tr>
+              <sc-for list="{{ cols }}" as="c" hint-placeholder-count="6"><th class="{{ c.cls }}">{{ c.label }}</th></sc-for>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+                <tr class="{{ r.cls }}" onClick="{{ r.go }}">
+                  <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="6">
+                    <td class="{{ c.cls }}">
+                      <sc-if value="{{ c.tag }}" hint-placeholder-val="{{ false }}"><span class="tag {{ c.tag }}">{{ c.v }}</span></sc-if>
+                      <sc-if value="{{ c.plain }}" hint-placeholder-val="{{ true }}"><span style="font-weight:{{ c.weight }};font-family:{{ c.font }}">{{ c.v }}</span></sc-if>
+                      <sc-if value="{{ c.sub }}" hint-placeholder-val="{{ false }}"><div class="muted" style="font-size:12px">{{ c.sub }}</div></sc-if>
+                      <sc-if value="{{ c.action }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" style="padding:3px 10px;font-size:12px" onClick="{{ c.action }}">{{ c.actionLabel }}</button></sc-if>
+                    </td>
+                  </sc-for>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <sc-if value="{{ hasTotals }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:44px;flex-wrap:wrap;margin-top:26px">
+            <sc-for list="{{ totals }}" as="t" hint-placeholder-count="3">
+              <div>
+                <div class="lbl" style="margin-bottom:3px">{{ t.label }}</div>
+                <div style="font-family:var(--font-heading);font-weight:600;font-size:22px;font-variant-numeric:tabular-nums">{{ t.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ listNote }}" hint-placeholder-val="{{ false }}">
+          <p class="muted" style="font-size:13px;max-width:48em;margin-top:26px">{{ listNote }}</p>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isContainer }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div onClick="{{ goContainers }}" class="rl kick" style="margin-bottom:6px">&larr; Container register</div>
+        <h1 style="margin:0 0 6px">{{ cd.id }}</h1>
+        <p class="muted" style="font-size:15px;margin:0 0 30px">{{ cd.line }}</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:24px;margin-bottom:44px">
+          <sc-for list="{{ cd.stats }}" as="s" hint-placeholder-count="5">
+            <div>
+              <div class="lbl" style="margin-bottom:4px">{{ s.label }}</div>
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:23px;font-variant-numeric:tabular-nums">{{ s.value }}</div>
+              <div class="muted" style="font-size:12px">{{ s.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:46px 44px;margin-bottom:46px">
+          <div>
+            <h4 style="margin:0 0 6px">Landed cost worksheet</h4>
+            <p class="muted" style="font-size:13px;margin:0 0 16px">Allocation basis drives how each expense head spreads over the lot&rsquo;s items.</p>
+            <div style="display:flex;gap:8px;margin-bottom:18px">
+              <sc-for list="{{ basisOpts }}" as="b" hint-placeholder-count="3">
+                <button class="btn {{ b.cls }}" style="padding:5px 12px;font-size:13px" onClick="{{ b.go }}">{{ b.label }}</button>
+              </sc-for>
+            </div>
+            <table class="table">
+              <thead><tr><th>Expense head</th><th>Basis</th><th class="n">Amount</th><th class="n">Per unit</th></tr></thead>
+              <tbody>
+                <sc-for list="{{ cd.costs }}" as="x" hint-placeholder-count="7">
+                  <tr><td>{{ x.head }}</td><td class="muted" style="font-size:13px">{{ x.basis }}</td><td class="n">{{ x.amount }}</td><td class="n">{{ x.per }}</td></tr>
+                </sc-for>
+                <tr><td style="font-weight:600">Total landed cost</td><td></td><td class="n" style="font-weight:600">{{ cd.costTotal }}</td><td class="n" style="font-weight:600">{{ cd.costPer }}</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h4 style="margin:0 0 6px">Lot items &amp; unit costing</h4>
+            <p class="muted" style="font-size:13px;margin:0 0 16px">Costs re-spread live when the basis changes; sold units keep the basis frozen at invoice time.</p>
+            <table class="table">
+              <thead><tr><th>Item</th><th class="n">Recd</th><th class="n">On hand</th><th class="n">Unit cost</th><th class="n">Stock value</th></tr></thead>
+              <tbody>
+                <sc-for list="{{ cd.items }}" as="i" hint-placeholder-count="5">
+                  <tr><td>{{ i.name }}<div class="muted" style="font-size:12px">{{ i.code }}</div></td><td class="n">{{ i.recd }}</td><td class="n">{{ i.onHand }}</td><td class="n">{{ i.unit }}</td><td class="n">{{ i.value }}</td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:46px 44px">
+          <div>
+            <h4 style="margin:0 0 16px">Container P&amp;L to date</h4>
+            <table class="table">
+              <tbody>
+                <sc-for list="{{ cd.pl }}" as="p" hint-placeholder-count="6">
+                  <tr><td style="font-weight:{{ p.weight }}">{{ p.label }}<div class="muted" style="font-size:12px">{{ p.sub }}</div></td><td class="n" style="font-weight:{{ p.weight }}">{{ p.value }}</td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h4 style="margin:0 0 16px">Document trail</h4>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <sc-for list="{{ cd.trail }}" as="t" hint-placeholder-count="6">
+                <div style="display:flex;gap:14px;align-items:baseline">
+                  <div class="muted" style="font-size:12px;width:76px;flex:none">{{ t.date }}</div>
+                  <div style="flex:1">
+                    <div style="font-size:14px">{{ t.what }}</div>
+                    <div class="muted" style="font-size:12px">{{ t.who }}</div>
+                  </div>
+                  <span class="tag tag-outline">{{ t.ref }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isInvoice }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div onClick="{{ goSales }}" class="rl kick" style="margin-bottom:6px">&larr; Sales invoices</div>
+        <h1 style="margin:0 0 8px">Sales invoice {{ inv.no }}</h1>
+        <p class="muted" style="font-size:15px;max-width:44em;margin:0 0 28px">Lot-level stock picking, customer price list with floor checks, and live gross profit before you post.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:22px;margin-bottom:30px;max-width:980px">
+          <div class="field">
+            <label>Customer</label>
+            <select class="input" value="{{ inv.customerId }}" onChange="{{ inv.setCustomer }}">
+              <sc-for list="{{ customerOpts }}" as="c" hint-placeholder-count="5"><option value="{{ c.id }}">{{ c.name }}</option></sc-for>
+            </select>
+          </div>
+          <div class="field"><label>Date</label><input class="input" value="14 Sep 2026" readonly="readonly"></div>
+          <div class="field"><label>Payment terms</label><input class="input" value="{{ inv.terms }}" readonly="readonly"></div>
+          <div class="field"><label>Credit position</label><input class="input" value="{{ inv.credit }}" readonly="readonly"></div>
+        </div>
+
+        <h4 style="margin:0 0 14px">Line items</h4>
+        <div style="overflow-x:auto">
+          <table class="table">
+            <thead><tr><th>Item</th><th>Container lot</th><th class="n">Qty</th><th class="n">Rate</th><th class="n">Unit cost</th><th class="n">Line total</th><th class="n">GP</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ inv.lines }}" as="l" hint-placeholder-count="2">
+                <tr>
+                  <td>{{ l.name }}<div class="muted" style="font-size:12px">{{ l.code }} &middot; floor {{ l.floor }}</div></td>
+                  <td>{{ l.lot }}<div class="muted" style="font-size:12px">{{ l.avail }} available</div></td>
+                  <td class="n"><input class="input" style="width:74px;padding:4px 7px;text-align:right" value="{{ l.qty }}" onChange="{{ l.setQty }}"></td>
+                  <td class="n"><input class="input" style="width:92px;padding:4px 7px;text-align:right" value="{{ l.rate }}" onChange="{{ l.setRate }}"></td>
+                  <td class="n muted">{{ l.cost }}</td>
+                  <td class="n">{{ l.total }}</td>
+                  <td class="n" style="color:{{ l.gpColor }}">{{ l.gp }}<div style="font-size:12px">{{ l.gpPct }}</div></td>
+                  <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:12px" onClick="{{ l.remove }}">Remove</button></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:22px 0 36px">
+          <div class="field" style="margin:0">
+            <label>Add item</label>
+            <select class="input" style="min-width:250px" value="{{ inv.pick }}" onChange="{{ inv.setPick }}">
+              <sc-for list="{{ inv.pickOpts }}" as="p" hint-placeholder-count="6"><option value="{{ p.id }}">{{ p.label }}</option></sc-for>
+            </select>
+          </div>
+          <button class="btn btn-secondary" onClick="{{ inv.addLine }}">Add line</button>
+        </div>
+
+        <div style="display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start">
+          <div style="min-width:280px">
+            <table class="table">
+              <tbody>
+                <sc-for list="{{ inv.totals }}" as="t" hint-placeholder-count="6">
+                  <tr><td style="font-weight:{{ t.weight }}">{{ t.label }}</td><td class="n" style="font-weight:{{ t.weight }};color:{{ t.color }}">{{ t.value }}</td></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <div style="max-width:30em">
+            <sc-if value="{{ inv.warning }}" hint-placeholder-val="{{ false }}">
+              <div style="border-left:3px solid var(--color-accent-2);padding:8px 14px;font-size:14px;margin-bottom:18px">{{ inv.warning }}</div>
+            </sc-if>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn btn-primary" onClick="{{ inv.post }}">{{ inv.postLabel }}</button>
+              <button class="btn btn-ghost" onClick="{{ goSales }}">Discard</button>
+            </div>
+            <p class="muted" style="font-size:13px;margin-top:16px">Posting writes the stock issue, the customer receivable and the double-entry batch in one transaction. {{ inv.postNote }}</p>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div class="kick" style="margin-bottom:6px">Reporting &middot; Module 62</div>
+        <h1 style="margin:0 0 8px">Report catalogue</h1>
+        <p class="muted" style="font-size:15px;max-width:44em;margin:0 0 34px">Every report is filterable by date, container, item, customer and salesman, and exports to Excel and PDF.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:38px 40px">
+          <sc-for list="{{ reportGroups }}" as="g" hint-placeholder-count="5">
+            <div>
+              <h4 style="margin:0 0 12px">{{ g.name }}</h4>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ g.items }}" as="r" hint-placeholder-count="5">
+                  <div onClick="{{ r.go }}" class="rl" style="font-size:14px;display:flex;justify-content:space-between;gap:12px">
+                    <span>{{ r.name }}</span>
+                    <span class="muted" style="font-size:12px;white-space:nowrap">{{ r.note }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320,&quot;height&quot;:900},&quot;usdRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:296.5,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:250,&quot;max&quot;:340,&quot;step&quot;:0.5,&quot;unit&quot;:&quot; PKR/USD&quot;,&quot;section&quot;:&quot;Assumptions&quot;},&quot;taxRate&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:18,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:25,&quot;step&quot;:1,&quot;unit&quot;:&quot;%&quot;,&quot;section&quot;:&quot;Assumptions&quot;},&quot;salesSeesCost&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Permissions&quot;}}">
+const RATE = 296.5;
+const ITEMS = [
+  { code: 'HW-1001', name: 'Ball bearing 6204-2RS', uom: 'pcs', cat: 'Hardware' },
+  { code: 'HW-1002', name: 'Hex bolt M12 x 80, box 100', uom: 'box', cat: 'Hardware' },
+  { code: 'HW-1010', name: 'Angle grinder 850W', uom: 'pcs', cat: 'Power tools' },
+  { code: 'EL-2003', name: 'Copper cable 2.5mm, roll 100m', uom: 'roll', cat: 'Electrical' },
+  { code: 'EL-2007', name: 'LED panel light 36W', uom: 'pcs', cat: 'Electrical' },
+  { code: 'PL-3001', name: 'PPRC elbow 32mm, box 50', uom: 'box', cat: 'Plumbing' },
+  { code: 'PL-3004', name: 'Gate valve 2in brass', uom: 'pcs', cat: 'Plumbing' },
+  { code: 'TL-4002', name: 'Impact drill 13mm', uom: 'pcs', cat: 'Power tools' }
+];
+const SUPPLIERS = [
+  { id: 'SUP-01', name: 'HTM Tools Co. Ltd', port: 'Guangzhou, CN', terms: 'LC 60 days', containers: 2 },
+  { id: 'SUP-02', name: 'Sunrise Hardware Ind.', port: 'Ningbo, CN', terms: 'TT 30% advance', containers: 2 },
+  { id: 'SUP-03', name: 'Jinhe Fittings Group', port: 'Qingdao, CN', terms: 'LC at sight', containers: 1 },
+  { id: 'SUP-04', name: 'Yuhua Electricals', port: 'Shanghai, CN', terms: 'LC 90 days', containers: 1 }
+];
+const CUSTOMERS = [
+  { id: 'C-01', name: 'Al-Madina Hardware', city: 'Karachi', terms: '30 days', limit: 4000000, disc: 0, salesman: 'Imran Qadri' },
+  { id: 'C-02', name: 'Sindh Electric Traders', city: 'Hyderabad', terms: '45 days', limit: 2500000, disc: 2.5, salesman: 'Imran Qadri' },
+  { id: 'C-03', name: 'Gulf Tools & Machinery', city: 'Lahore', terms: 'Cash', limit: 1500000, disc: 5, salesman: 'Naveed Alam' },
+  { id: 'C-04', name: 'Pak Plumbing Mart', city: 'Karachi', terms: '30 days', limit: 1000000, disc: 0, salesman: 'Naveed Alam' },
+  { id: 'C-05', name: 'Continental Traders', city: 'Faisalabad', terms: '60 days', limit: 3000000, disc: 3, salesman: 'Imran Qadri' }
+];
+const CONTAINERS = [
+  { id: 'PSC-2601', ctr: 'MSKU-4471820', sup: 'SUP-01', bl: 'BL-HKG-77412', gd: 'KAPW-HC-118420', size: "40' HC", eta: '10 Jul 2026', recd: '12 Jul 2026', status: 'Selling',
+    lines: [ ['HW-1001', 4800, 1.95, 4200], ['HW-1002', 900, 7.40, 6300], ['TL-4002', 420, 21.50, 3200] ],
+    costs: [ ['Ocean freight', 1185000, 'o'], ['Marine insurance', 214000, 'v'], ['Customs duty 20%', 2394000, 'v'], ['Port & terminal (KPT)', 386000, 'o'], ['Clearing agent', 175000, 'q'], ['Inland transport', 248000, 'o'], ['Bank & LC charges', 142000, 'v'] ] },
+  { id: 'PSC-2602', ctr: 'TGHU-9013355', sup: 'SUP-02', bl: 'BL-NGB-30188', gd: 'KAPW-HC-121004', size: "40' HC", eta: '30 Jul 2026', recd: '02 Aug 2026', status: 'Selling',
+    lines: [ ['EL-2003', 1250, 33.00, 12500], ['EL-2007', 2600, 6.10, 3900], ['HW-1010', 560, 26.00, 4500] ],
+    costs: [ ['Ocean freight', 1310000, 'o'], ['Marine insurance', 268000, 'v'], ['Customs duty 20%', 3012000, 'v'], ['Port & terminal (KPT)', 402000, 'o'], ['Clearing agent', 180000, 'q'], ['Inland transport', 262000, 'o'], ['Bank & LC charges', 161000, 'v'] ] },
+  { id: 'PSC-2603', ctr: 'CSNU-6628104', sup: 'SUP-03', bl: 'BL-TAO-55290', gd: 'KAPW-HC-124771', size: "20' GP", eta: '26 Aug 2026', recd: '28 Aug 2026', status: 'Selling',
+    lines: [ ['PL-3001', 1800, 9.20, 5400], ['PL-3004', 1400, 12.80, 7000] ],
+    costs: [ ['Ocean freight', 690000, 'o'], ['Marine insurance', 118000, 'v'], ['Customs duty 20%', 1485000, 'v'], ['Port & terminal (KPT)', 240000, 'o'], ['Clearing agent', 150000, 'q'], ['Inland transport', 146000, 'o'], ['Bank & LC charges', 88000, 'v'] ] },
+  { id: 'PSC-2604', ctr: 'OOLU-2277431', sup: 'SUP-04', bl: 'BL-SHA-91002', gd: 'filed 11 Sep', size: "40' HC", eta: '09 Sep 2026', recd: '', status: 'In clearance',
+    lines: [ ['EL-2007', 3200, 6.05, 4800], ['EL-2003', 700, 32.40, 7000] ],
+    costs: [ ['Ocean freight', 1272000, 'o'], ['Marine insurance', 231000, 'v'], ['Customs duty 20%', 2640000, 'v'] ] },
+  { id: 'PSC-2605', ctr: 'MSKU-7710269', sup: 'SUP-02', bl: 'BL-NGB-31644', gd: '\u2014', size: "40' HC", eta: '22 Sep 2026', recd: '', status: 'In transit',
+    lines: [ ['HW-1001', 5200, 2.02, 4550], ['HW-1002', 1100, 7.55, 7700] ],
+    costs: [ ['Ocean freight', 1240000, 'o'] ] }
+];
+const SEED_INVOICES = [
+  { no: 'INV-0031', date: '05 Aug 2026', d: 40, cust: 'C-01', lines: [ ['HW-1001', 'PSC-2601', 1400, 1010], ['TL-4002', 'PSC-2601', 90, 10650] ] },
+  { no: 'INV-0032', date: '12 Aug 2026', d: 33, cust: 'C-02', lines: [ ['HW-1002', 'PSC-2601', 260, 3720] ] },
+  { no: 'INV-0033', date: '20 Aug 2026', d: 25, cust: 'C-03', lines: [ ['EL-2007', 'PSC-2602', 640, 3180], ['HW-1010', 'PSC-2602', 120, 13400] ] },
+  { no: 'INV-0034', date: '29 Aug 2026', d: 16, cust: 'C-01', lines: [ ['EL-2003', 'PSC-2602', 210, 15900], ['HW-1001', 'PSC-2601', 900, 1040] ] },
+  { no: 'INV-0035', date: '03 Sep 2026', d: 11, cust: 'C-04', lines: [ ['PL-3001', 'PSC-2603', 520, 4380], ['PL-3004', 'PSC-2603', 300, 5950] ] },
+  { no: 'INV-0036', date: '09 Sep 2026', d: 5, cust: 'C-02', lines: [ ['EL-2007', 'PSC-2602', 480, 3120], ['EL-2003', 'PSC-2602', 95, 16200] ] }
+];
+const SEED_RECEIPTS = [
+  { no: 'RV-0021', date: '18 Aug 2026', cust: 'C-01', amt: 1600000, mode: 'Cheque \u2014 Meezan 0431' },
+  { no: 'RV-0022', date: '27 Aug 2026', cust: 'C-03', amt: 3600000, mode: 'Bank transfer \u2014 HBL' },
+  { no: 'RV-0023', date: '01 Sep 2026', cust: 'C-02', amt: 900000, mode: 'Cheque \u2014 UBL 7742' },
+  { no: 'RV-0024', date: '10 Sep 2026', cust: 'C-01', amt: 2200000, mode: 'Bank transfer \u2014 Meezan' }
+];
+const NAV = [
+  ['Overview', [['dash', 'Dashboard']]],
+  ['Imports', [['containers', 'Container register'], ['costing', 'Landed costing'], ['suppliers', 'Suppliers & LCs']]],
+  ['Inventory', [['stock', 'Stock on hand'], ['lotstock', 'Container-wise stock'], ['items', 'Item master']]],
+  ['Sales', [['sales', 'Sales invoices'], ['pricing', 'Customer price lists'], ['customers', 'Customers']]],
+  ['Finance', [['receivables', 'Receivables & aging'], ['receipts', 'Receipts'], ['gl', 'General ledger'], ['tb', 'Trial balance'], ['profit', 'Container profitability']]],
+  ['Administration', [['reports', 'Report catalogue'], ['roles', 'Roles & approvals']]]
+];
+
+class Component extends DCLogic {
+  state = {
+    screen: 'dash', role: 'Owner', basis: 'o-value', toast: '', ctr: 'PSC-2601', filter: 'All',
+    invoices: SEED_INVOICES.map(function (i) { return Object.assign({}, i, { lines: i.lines.map(function (l) { return l.slice(); }) }); }),
+    receipts: SEED_RECEIPTS.slice(),
+    draft: null
+  };
+
+  // ---------- helpers ----------
+  item(code) { return ITEMS.find(function (i) { return i.code === code; }) || { code: code, name: code, uom: '' }; }
+  fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+  fmtc(n) {
+    const a = Math.abs(n);
+    if (a >= 1e6) return (n / 1e6).toFixed(2) + ' M';
+    if (a >= 1e3) return (n / 1e3).toFixed(0) + ' K';
+    return this.fmt(n);
+  }
+  pct(n) { return (n * 100).toFixed(1) + '%'; }
+  go(screen, extra) { const s = Object.assign({ screen: screen, toast: '' }, extra || {}); this.setState(s); }
+
+  /** unit costing for every container lot, on the current allocation basis */
+  lots() {
+    const self = this;
+    const basis = this.state.basis === 'o-value' ? 'v' : this.state.basis === 'o-weight' ? 'w' : 'q';
+    const rate = this.props.usdRate || RATE;
+    return CONTAINERS.map(function (c) {
+      const rows = c.lines.map(function (l) {
+        return { code: l[0], qty: l[1], fob: l[1] * l[2] * rate, wt: l[3] };
+      });
+      const tot = { v: 0, w: 0, q: 0 };
+      rows.forEach(function (r) { tot.v += r.fob; tot.w += r.wt; tot.q += r.qty; });
+      const heads = c.costs.map(function (x) {
+        const b = x[2] === 'o' ? basis : x[2];
+        return { head: x[0], amount: x[1], b: b };
+      });
+      const costTotal = heads.reduce(function (s, h) { return s + h.amount; }, 0);
+      rows.forEach(function (r) {
+        let alloc = 0;
+        heads.forEach(function (h) {
+          const share = h.b === 'v' ? r.fob / tot.v : h.b === 'w' ? r.wt / tot.w : r.qty / tot.q;
+          alloc += h.amount * share;
+        });
+        r.alloc = alloc;
+        r.landed = r.fob + alloc;
+        r.unit = r.landed / r.qty;
+        r.sold = self.soldQty(c.id, r.code);
+        r.onHand = r.qty - r.sold;
+        r.value = r.onHand * r.unit;
+      });
+      return { c: c, rows: rows, fobTotal: tot.v, wt: tot.w, qty: tot.q, costTotal: costTotal, landed: tot.v + costTotal, live: !!c.recd };
+    });
+  }
+  lot(id) { return this.lots().find(function (l) { return l.c.id === id; }); }
+  soldQty(ctr, code) {
+    let q = 0;
+    this.state.invoices.forEach(function (inv) {
+      inv.lines.forEach(function (l) { if (l[1] === ctr && l[0] === code) q += l[2]; });
+    });
+    return q;
+  }
+  unitCost(ctr, code) {
+    const l = this.lot(ctr);
+    const r = l && l.rows.find(function (x) { return x.code === code; });
+    return r ? r.unit : 0;
+  }
+  avail(ctr, code) {
+    const l = this.lot(ctr);
+    const r = l && l.rows.find(function (x) { return x.code === code; });
+    return r ? r.onHand : 0;
+  }
+  invTotals(inv) {
+    const self = this;
+    let net = 0, cogs = 0;
+    inv.lines.forEach(function (l) { net += l[2] * l[3]; cogs += l[2] * self.unitCost(l[1], l[0]); });
+    const tax = net * ((this.props.taxRate == null ? 18 : this.props.taxRate) / 100);
+    return { net: net, cogs: cogs, gp: net - cogs, tax: tax, gross: net + tax };
+  }
+  custBal(id) {
+    const self = this;
+    let due = 0;
+    this.state.invoices.forEach(function (i) { if (i.cust === id) due += self.invTotals(i).gross; });
+    this.state.receipts.forEach(function (r) { if (r.cust === id) due -= r.amt; });
+    return due;
+  }
+  books() {
+    const self = this;
+    let sales = 0, cogs = 0, tax = 0, gross = 0;
+    this.state.invoices.forEach(function (i) { const t = self.invTotals(i); sales += t.net; cogs += t.cogs; tax += t.tax; gross += t.gross; });
+    const recd = this.state.receipts.reduce(function (s, r) { return s + r.amt; }, 0);
+    const stock = this.lots().reduce(function (s, l) { return l.live ? s + l.rows.reduce(function (q, r) { return q + r.value; }, 0) : s; }, 0);
+    const inTransit = this.lots().reduce(function (s, l) { return l.live ? s : s + l.landed; }, 0);
+    return { sales: sales, cogs: cogs, gp: sales - cogs, tax: tax, gross: gross, recd: recd, ar: gross - recd, stock: stock, inTransit: inTransit };
+  }
+
+  // ---------- invoice draft ----------
+  startInvoice = () => {
+    const n = 37 + (this.state.invoices.length - SEED_INVOICES.length);
+    this.setState({ screen: 'invoice', toast: '', draft: { no: 'INV-00' + n, cust: 'C-01', lines: [], pick: '' } });
+  };
+  editDraft(fn) { const d = Object.assign({}, this.state.draft); fn(d); this.setState({ draft: d }); }
+  pickOptions() {
+    const self = this;
+    const opts = [];
+    this.lots().forEach(function (l) {
+      if (!l.live) return;
+      l.rows.forEach(function (r) {
+        if (r.onHand <= 0) return;
+        opts.push({ id: l.c.id + '|' + r.code, label: self.item(r.code).name + ' \u2014 ' + l.c.id + ' (' + self.fmt(r.onHand) + ' ' + self.item(r.code).uom + ')' });
+      });
+    });
+    return opts;
+  }
+  floorPrice(ctr, code) { return this.unitCost(ctr, code) * 1.08; }
+  postDraft = () => {
+    const self = this;
+    const d = this.state.draft;
+    if (!d || !d.lines.length) { this.setState({ toast: 'Add at least one line before posting.' }); return; }
+    const below = d.lines.some(function (l) { return l[3] < self.floorPrice(l[1], l[0]); });
+    if (below && this.state.role !== 'Owner') {
+      this.setState({ screen: 'sales', draft: null, toast: d.no + ' sent to the owner for below-floor price approval. Stock is reserved, nothing posted to the ledger yet.' });
+      return;
+    }
+    const inv = { no: d.no, date: '14 Sep 2026', d: 0, cust: d.cust, lines: d.lines.map(function (l) { return l.slice(); }) };
+    const t = this.invTotals(inv);
+    const cust = CUSTOMERS.find(function (c) { return c.id === d.cust; });
+    this.setState({
+      invoices: this.state.invoices.concat([inv]), draft: null, screen: 'sales',
+      toast: d.no + ' posted \u2014 ' + this.fmt(t.gross) + ' billed to ' + cust.name + ', gross profit ' + this.fmt(t.gp) + ' (' + this.pct(t.gp / t.net) + '), stock issued from ' + d.lines.map(function (l) { return l[1]; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(', ') + ' and the journal batch written.'
+    });
+  };
+  receive = (custId) => {
+    const bal = this.custBal(custId);
+    if (bal <= 0) { this.setState({ toast: 'No balance outstanding on this account.' }); return; }
+    const cust = CUSTOMERS.find(function (c) { return c.id === custId; });
+    const amt = Math.round(bal * 0.6);
+    const no = 'RV-00' + (25 + this.state.receipts.length - SEED_RECEIPTS.length);
+    this.setState({
+      receipts: this.state.receipts.concat([{ no: no, date: '14 Sep 2026', cust: custId, amt: amt, mode: 'Bank transfer \u2014 Meezan' }]),
+      toast: no + ' recorded \u2014 ' + this.fmt(amt) + ' from ' + cust.name + '. Bank debited, receivable credited, aging rebuilt.'
+    });
+  };
+
+  // ---------- render ----------
+  cell(v, o) {
+    o = o || {};
+    return { v: v, cls: o.n ? 'n' : '', sub: o.sub || '', tag: o.tag || '', plain: !o.tag, weight: o.b ? '600' : '400', font: o.b ? 'var(--font-heading)' : 'inherit', action: o.action || '', actionLabel: o.actionLabel || '' };
+  }
+  renderVals() {
+    const self = this;
+    const s = this.state;
+    const b = this.books();
+    const lots = this.lots();
+    const live = lots.filter(function (l) { return l.live; });
+    const nav = NAV.map(function (g) {
+      return { name: g[0], items: g[1].map(function (n) {
+        const on = s.screen === n[0] || (n[0] === 'containers' && s.screen === 'container') || (n[0] === 'sales' && s.screen === 'invoice');
+        return { label: n[1], color: on ? 'var(--color-accent)' : 'var(--color-text)', weight: on ? '600' : '400', go: function () { self.go(n[0]); } };
+      }) };
+    });
+    const vals = {
+      navGroups: nav, roles: ['Owner', 'Accountant', 'Sales officer'], role: s.role, toast: s.toast,
+      goHome: function () { self.go('dash'); }, goContainers: function () { self.go('containers'); }, goSales: function () { self.go('sales'); },
+      setRole: function (e) { self.setState({ role: e.target.value, toast: 'Switched to ' + e.target.value + ' \u2014 cost and margin columns follow the role.' }); },
+      startInvoice: this.startInvoice,
+      customerOpts: CUSTOMERS.map(function (c) { return { id: c.id, name: c.name + ' \u2014 ' + c.city }; }),
+      isDash: s.screen === 'dash', isContainer: s.screen === 'container', isInvoice: s.screen === 'invoice', isReports: s.screen === 'reports',
+      isList: ['dash', 'container', 'invoice', 'reports'].indexOf(s.screen) === -1
+    };
+    Object.assign(vals, this.dashVals(b, lots, live));
+    if (vals.isContainer) vals.cd = this.containerVals();
+    if (vals.isInvoice) vals.inv = this.invoiceVals();
+    if (vals.isList) Object.assign(vals, this.listVals(b, lots, live));
+    if (vals.isReports) vals.reportGroups = this.reportVals();
+    return vals;
+  }
+
+  dashVals(b, lots, live) {
+    const self = this;
+    const sold = live.map(function (l) {
+      let rev = 0, cogs = 0;
+      self.state.invoices.forEach(function (i) {
+        i.lines.forEach(function (x) { if (x[1] === l.c.id) { rev += x[2] * x[3]; cogs += x[2] * self.unitCost(l.c.id, x[0]); } });
+      });
+      return { id: l.c.id, rev: rev, gp: rev - cogs, landed: l.landed };
+    });
+    const maxGp = Math.max.apply(null, sold.map(function (x) { return x.gp; }).concat([1]));
+    const months = [['Jun', 0], ['Jul', 0], ['Aug', 0], ['Sep', 0]];
+    this.state.invoices.forEach(function (i) {
+      const m = i.date.slice(3, 6);
+      const row = months.find(function (x) { return x[0] === m; });
+      if (row) row[1] += self.invTotals(i).net;
+    });
+    months[0][1] = 6180000;
+    const maxM = Math.max.apply(null, months.map(function (m) { return m[1]; }));
+    return {
+      dashHead: live.length + ' containers landed and selling, ' + (lots.length - live.length) + ' on the water or in clearance.',
+      kStock: this.fmtc(b.stock), kStockSub: this.fmt(live.reduce(function (q, l) { return q + l.rows.reduce(function (t, r) { return t + r.onHand; }, 0); }, 0)) + ' units across ' + live.length + ' container lots',
+      kGP: this.fmtc(b.gp), kGPSub: this.pct(b.gp / b.sales) + ' on net sales of ' + this.fmtc(b.sales),
+      kpis: [
+        { label: 'Net sales YTD', value: this.fmtc(b.sales), sub: this.state.invoices.length + ' invoices', go: function () { self.go('sales'); } },
+        { label: 'Receivables', value: this.fmtc(b.ar), sub: 'incl. 18% sales tax', go: function () { self.go('receivables'); } },
+        { label: 'Overdue > 45 days', value: this.fmtc(b.ar * 0.22), sub: '2 accounts', go: function () { self.go('receivables'); } },
+        { label: 'Goods in transit', value: this.fmtc(b.inTransit), sub: '2 containers', go: function () { self.go('containers'); } },
+        { label: 'Input tax carried', value: this.fmtc(b.tax * 0.64), sub: 'adjustable next return', go: function () { self.go('gl'); } },
+        { label: 'Cost of goods sold', value: this.fmtc(b.cogs), sub: 'on the current basis', go: function () { self.go('profit'); } }
+      ],
+      monthBars: months.map(function (m) { return { label: m[0], value: self.fmtc(m[1]), h: Math.round(110 * m[1] / maxM) + 12 }; }),
+      pipeline: lots.map(function (l) {
+        return { id: l.c.id, supplier: (SUPPLIERS.find(function (x) { return x.id === l.c.sup; }) || {}).name, meta: l.c.size + ' \u00b7 ' + l.c.ctr + ' \u00b7 ' + (l.c.recd ? 'received ' + l.c.recd : 'ETA ' + l.c.eta),
+          status: l.c.status, tagClass: l.c.status === 'Selling' ? 'tag-accent' : l.c.status === 'In clearance' ? 'tag-accent-2' : 'tag-outline',
+          go: function () { self.go('container', { ctr: l.c.id }); } };
+      }),
+      alerts: [
+        { title: 'PSC-2604 duty paid, GD filed \u2014 awaiting delivery order', detail: 'Landed cost worksheet is provisional until port charges post', color: 'var(--color-accent-2)', go: function () { self.go('container', { ctr: 'PSC-2604' }); } },
+        { title: 'Sindh Electric Traders is 92% of its credit limit', detail: 'Balance ' + this.fmtc(this.custBal('C-02')) + ' against a 2.50 M limit', color: 'var(--color-accent-2)', go: function () { self.go('receivables'); } },
+        { title: 'LED panel 36W below reorder level', detail: this.fmt(this.avail('PSC-2602', 'EL-2007')) + ' pcs on hand; 3,200 arriving on PSC-2604', color: 'var(--color-accent)', go: function () { self.go('stock'); } },
+        { title: '2 invoices await owner approval on below-floor pricing', detail: 'Sales officers cannot post under cost + 8%', color: 'var(--color-accent)', go: function () { self.go('roles'); } }
+      ],
+      profitBars: sold.map(function (x) {
+        return { id: x.id, gp: self.fmtc(x.gp), margin: x.rev ? self.pct(x.gp / x.rev) : '\u2014', pct: Math.round(100 * x.gp / maxGp), go: function () { self.go('container', { ctr: x.id }); } };
+      })
+    };
+  }
+
+  containerVals() {
+    const self = this;
+    const l = this.lot(this.state.ctr) || this.lot('PSC-2601');
+    const c = l.c;
+    const sup = SUPPLIERS.find(function (x) { return x.id === c.sup; }) || {};
+    const bl = { v: 'landed value', w: 'gross weight', q: 'unit count' };
+    let rev = 0, cogs = 0;
+    this.state.invoices.forEach(function (i) {
+      i.lines.forEach(function (x) { if (x[1] === c.id) { rev += x[2] * x[3]; cogs += x[2] * self.unitCost(c.id, x[0]); } });
+    });
+    const stockLeft = l.rows.reduce(function (s, r) { return s + r.value; }, 0);
+    const show = this.state.role !== 'Sales officer';
+    return {
+      id: c.id, line: sup.name + ' \u00b7 ' + sup.port + ' \u00b7 ' + c.size + ' \u00b7 ' + c.ctr + ' \u00b7 BL ' + c.bl + ' \u00b7 GD ' + c.gd + ' \u00b7 ' + (c.recd ? 'received ' + c.recd : 'ETA ' + c.eta),
+      stats: [
+        { label: 'FOB value', value: this.fmtc(l.fobTotal), sub: 'at ' + (this.props.usdRate || RATE) + ' PKR/USD' },
+        { label: 'Import costs', value: this.fmtc(l.costTotal), sub: c.costs.length + ' expense heads' },
+        { label: 'Total landed cost', value: this.fmtc(l.landed), sub: this.fmt(l.qty) + ' units \u00b7 ' + this.fmt(l.wt) + ' kg' },
+        { label: 'Sold to date', value: this.fmtc(rev), sub: rev ? this.pct((rev - cogs) / rev) + ' margin' : 'not yet selling' },
+        { label: 'Stock remaining', value: this.fmtc(stockLeft), sub: this.pct(l.landed ? stockLeft / l.landed : 0) + ' of the lot' }
+      ],
+      costs: c.costs.map(function (x) {
+        const basis = x[2] === 'o' ? self.state.basis.slice(2) : x[2] === 'v' ? 'value' : x[2] === 'w' ? 'weight' : 'quantity';
+        return { head: x[0], basis: 'by ' + (basis === 'value' ? bl.v : basis === 'weight' ? bl.w : bl.q), amount: self.fmt(x[1]), per: self.fmt(x[1] / l.qty) };
+      }),
+      costTotal: this.fmt(l.costTotal), costPer: this.fmt(l.costTotal / l.qty),
+      items: l.rows.map(function (r) {
+        return { name: self.item(r.code).name, code: r.code + ' \u00b7 ' + self.item(r.code).uom, recd: self.fmt(r.qty), onHand: self.fmt(r.onHand),
+          unit: show ? self.fmt(r.unit) : '\u2014', value: show ? self.fmt(r.value) : '\u2014' };
+      }),
+      pl: [
+        { label: 'Revenue realised', sub: 'net of discount, before sales tax', value: this.fmt(rev), weight: '400' },
+        { label: 'Cost of goods sold', sub: 'at frozen landed unit cost', value: '(' + this.fmt(cogs) + ')', weight: '400' },
+        { label: 'Gross profit realised', sub: rev ? this.pct((rev - cogs) / rev) + ' of revenue' : '', value: this.fmt(rev - cogs), weight: '600' },
+        { label: 'Unsold stock at cost', sub: 'carried in inventory', value: this.fmt(stockLeft), weight: '400' },
+        { label: 'Projected profit at list price', sub: 'if remaining stock sells at list', value: this.fmt((rev - cogs) + stockLeft * 0.31), weight: '400' },
+        { label: 'Cash recovered against this lot', sub: 'receipts applied FIFO', value: this.fmt(rev * 0.72), weight: '400' }
+      ],
+      trail: [
+        { date: c.eta, what: 'Purchase order & LC opened with ' + sup.name, who: 'Owner \u00b7 ' + sup.terms, ref: 'PO-' + c.id.slice(4) },
+        { date: c.eta, what: 'Bill of lading received, shipment in transit', who: 'Import desk', ref: c.bl },
+        { date: c.recd || '\u2014', what: 'Goods declaration filed and duty paid', who: 'Clearing agent \u00b7 Al-Noor Logistics', ref: c.gd },
+        { date: c.recd || '\u2014', what: c.recd ? 'Container received and put away at Site A' : 'Awaiting delivery order', who: 'Store keeper', ref: c.recd ? 'GRN-' + c.id.slice(4) : 'pending' },
+        { date: c.recd || '\u2014', what: c.recd ? 'Landed cost worksheet finalised and stock costed' : 'Provisional costing only', who: 'Accountant', ref: c.recd ? 'LC-' + c.id.slice(4) : 'draft' }
+      ],
+      basisOpts: ['o-value', 'o-weight', 'o-quantity'].map(function (k) {
+        return { label: 'Allocate by ' + k.slice(2), cls: self.state.basis === k ? 'btn-primary' : 'btn-secondary',
+          go: function () { self.setState({ basis: k, toast: 'Overhead heads re-allocated by ' + k.slice(2) + ' \u2014 unit costs, stock value and open-stock margins updated. Sold units keep the basis frozen at invoice date.' }); } };
+      })
+    };
+  }
+
+  invoiceVals() {
+    const self = this;
+    const d = this.state.draft || { no: '\u2014', cust: 'C-01', lines: [], pick: '' };
+    const cust = CUSTOMERS.find(function (c) { return c.id === d.cust; }) || CUSTOMERS[0];
+    const t = this.invTotals({ lines: d.lines });
+    const bal = this.custBal(d.cust);
+    const below = d.lines.filter(function (l) { return l[3] < self.floorPrice(l[1], l[0]); });
+    const over = t.gross + bal > cust.limit;
+    const owner = this.state.role === 'Owner';
+    const opts = this.pickOptions();
+    return {
+      no: d.no, customerId: d.cust, terms: cust.terms + ' \u00b7 ' + cust.salesman, credit: this.fmt(bal) + ' due of ' + this.fmt(cust.limit) + ' limit',
+      setCustomer: function (e) { self.editDraft(function (x) { x.cust = e.target.value; }); },
+      pick: d.pick, pickOpts: [{ id: '', label: 'Select item and container lot\u2026' }].concat(opts),
+      setPick: function (e) { self.editDraft(function (x) { x.pick = e.target.value; }); },
+      addLine: function () {
+        const p = (self.state.draft || {}).pick;
+        if (!p) { self.setState({ toast: 'Choose an item and lot first.' }); return; }
+        const parts = p.split('|');
+        const price = Math.round(self.unitCost(parts[0], parts[1]) * 1.34 * (1 - cust.disc / 100) / 5) * 5;
+        self.editDraft(function (x) { x.lines = x.lines.concat([[parts[1], parts[0], Math.min(50, self.avail(parts[0], parts[1])), price]]); x.pick = ''; });
+      },
+      lines: d.lines.map(function (l, idx) {
+        const cost = self.unitCost(l[1], l[0]);
+        const gp = l[2] * (l[3] - cost);
+        return {
+          name: self.item(l[0]).name, code: l[0], floor: self.fmt(self.floorPrice(l[1], l[0])), lot: l[1], avail: self.fmt(self.avail(l[1], l[0]) + l[2]) + ' ' + self.item(l[0]).uom,
+          qty: String(l[2]), rate: String(l[3]), cost: self.fmt(cost), total: self.fmt(l[2] * l[3]),
+          gp: self.fmt(gp), gpPct: l[3] ? self.pct((l[3] - cost) / l[3]) : '\u2014',
+          gpColor: l[3] < self.floorPrice(l[1], l[0]) ? 'var(--color-accent-2)' : 'var(--color-text)',
+          setQty: function (e) { const v = Math.max(0, Math.min(self.avail(l[1], l[0]) + l[2], parseInt(e.target.value, 10) || 0)); self.editDraft(function (x) { x.lines = x.lines.map(function (y, j) { return j === idx ? [y[0], y[1], v, y[3]] : y; }); }); },
+          setRate: function (e) { const v = Math.max(0, parseInt(e.target.value, 10) || 0); self.editDraft(function (x) { x.lines = x.lines.map(function (y, j) { return j === idx ? [y[0], y[1], y[2], v] : y; }); }); },
+          remove: function () { self.editDraft(function (x) { x.lines = x.lines.filter(function (y, j) { return j !== idx; }); }); }
+        };
+      }),
+      totals: [
+        { label: 'Net of ' + d.lines.length + ' lines', value: this.fmt(t.net), weight: '400', color: 'inherit' },
+        { label: 'Trade discount ' + cust.disc + '%', value: 'applied in rate', weight: '400', color: 'inherit' },
+        { label: 'Sales tax ' + (this.props.taxRate == null ? 18 : this.props.taxRate) + '%', value: this.fmt(t.tax), weight: '400', color: 'inherit' },
+        { label: 'Invoice total', value: this.fmt(t.gross), weight: '600', color: 'inherit' },
+        { label: 'Cost of goods', value: this.fmt(t.cogs), weight: '400', color: 'inherit' },
+        { label: 'Gross profit', value: this.fmt(t.gp) + (t.net ? '  (' + this.pct(t.gp / t.net) + ')' : ''), weight: '600', color: t.gp < 0 ? 'var(--color-accent-2)' : 'var(--color-accent-700)' }
+      ],
+      warning: below.length ? below.length + ' line' + (below.length > 1 ? 's are' : ' is') + ' priced below the cost + 8% floor. ' + (owner ? 'As owner you may override.' : 'A sales officer must route this to the owner.')
+        : over ? 'This invoice takes ' + cust.name + ' past its credit limit \u2014 owner release required.' : '',
+      postLabel: below.length && !owner ? 'Request approval' : below.length ? 'Post with override' : 'Post invoice',
+      postNote: owner ? 'Owner rights include below-floor and over-limit override.' : 'Your role posts at or above floor price only.',
+      post: this.postDraft
+    };
+  }
+
+  reportVals() {
+    const self = this;
+    const G = [
+      ['Import & costing', [['Container landed cost sheet', 'per lot'], ['Expense head analysis', 'by basis'], ['Duty & tax paid register', 'GD-wise'], ['Supplier purchase summary', 'FOB vs landed'], ['Goods in transit', 'as at date']]],
+      ['Inventory', [['Stock on hand valuation', 'lot-wise'], ['Container-wise stock movement', 'in / out / balance'], ['Item ledger', 'full trail'], ['Slow moving & ageing stock', '>90 days'], ['Reorder level exceptions', 'live']]],
+      ['Sales & profitability', [['Sales register', 'date range'], ['Gross profit by invoice', 'cost frozen'], ['Container profitability', 'realised + projected'], ['Item-wise margin analysis', 'top / bottom'], ['Salesman performance', 'target vs actual'], ['Customer-wise sales', 'with discount %']]],
+      ['Receivables & cash', [['Receivables aging', '0/30/60/90+'], ['Customer ledger & statement', 'printable'], ['Receipts register', 'mode-wise'], ['Credit limit exceptions', 'live'], ['Cheque register & clearing', 'status']]],
+      ['Accounting', [['General ledger', 'account-wise'], ['Trial balance', 'as at date'], ['Profit & loss', 'period'], ['Balance sheet', 'as at date'], ['Sales tax return working', 'monthly'], ['Audit trail of edits', 'user-wise']]]
+    ];
+    return G.map(function (g) {
+      return { name: g[0], items: g[1].map(function (r) {
+        return { name: r[0], note: r[1], go: function () { self.setState({ toast: '\u201c' + r[0] + '\u201d would open here with date, container, item, customer and salesman filters, plus Excel and PDF export.' }); } };
+      }) };
+    });
+  }
+
+  listVals(b, lots, live) {
+    const self = this;
+    const f = function (n) { return self.fmt(n); };
+    const C = function (v, o) { return self.cell(v, o); };
+    const cols = function (arr) { return arr.map(function (x) { return typeof x === 'string' ? { label: x, cls: '' } : { label: x[0], cls: 'n' }; }); };
+    const show = this.state.role !== 'Sales officer' || this.props.salesSeesCost === true;
+    const s = this.state.screen;
+    const out = { hasFilters: false, filters: [], hasTotals: false, totals: [], listNote: '', cols: [], rows: [] };
+    const row = function (cells, go) { return { cells: cells, cls: go ? 'rl' : '', go: go || null }; };
+
+    if (s === 'containers' || s === 'costing') {
+      const costing = s === 'costing';
+      Object.assign(out, {
+        listKicker: costing ? 'Import \u00b7 Module 12' : 'Import \u00b7 Module 09',
+        listTitle: costing ? 'Landed costing' : 'Container register',
+        listBlurb: costing ? 'Every import expense head against its container, with the allocated cost per unit on the current basis.' : 'One record per shipment, from purchase order and LC through clearance, receipt and costing.',
+        cols: cols(costing ? ['Container', 'Supplier', ['FOB value'], ['Import costs'], ['Landed cost'], ['Cost per unit'], 'Basis'] : ['Container', 'Supplier / origin', 'BL & GD', 'ETA / received', ['Landed cost'], ['Stock value'], 'Status']),
+        rows: lots.map(function (l) {
+          const sup = SUPPLIERS.find(function (x) { return x.id === l.c.sup; }) || {};
+          const stock = l.rows.reduce(function (q, r) { return q + r.value; }, 0);
+          const tag = l.c.status === 'Selling' ? 'tag-accent' : l.c.status === 'In clearance' ? 'tag-accent-2' : 'tag-outline';
+          const cells = costing
+            ? [C(l.c.id, { b: true, sub: l.c.size }), C(sup.name, { sub: sup.port }), C(f(l.fobTotal), { n: true }), C(f(l.costTotal), { n: true }), C(f(l.landed), { n: true, b: true }), C(show ? f(l.landed / l.qty) : '\u2014', { n: true, sub: show ? 'over ' + f(l.qty) + ' units' : '' }), C(self.state.basis.slice(2), { tag: 'tag-outline' })]
+            : [C(l.c.id, { b: true, sub: l.c.ctr }), C(sup.name, { sub: sup.port }), C(l.c.bl, { sub: 'GD ' + l.c.gd }), C(l.c.recd || l.c.eta, { sub: l.c.recd ? 'received' : 'expected' }), C(f(l.landed), { n: true }), C(l.live ? f(stock) : '\u2014', { n: true }), C(l.c.status, { tag: tag })];
+          return row(cells, function () { self.go('container', { ctr: l.c.id }); });
+        }),
+        hasTotals: true,
+        totals: [{ label: 'Lots on the books', value: String(lots.length) }, { label: 'Total landed cost', value: f(lots.reduce(function (q, l) { return q + l.landed; }, 0)) }, { label: 'Stock value on hand', value: f(b.stock) }, { label: 'Goods in transit', value: f(b.inTransit) }],
+        listNote: 'Click any container for its landed cost worksheet, unit costing and lot P&L.'
+      });
+    } else if (s === 'suppliers') {
+      Object.assign(out, {
+        listKicker: 'Import \u00b7 Module 04', listTitle: 'Suppliers & LCs', listBlurb: 'Supplier master with payment terms, open letters of credit and purchase history.',
+        cols: cols(['Supplier', 'Origin port', 'Terms', ['Containers'], ['Purchases FOB'], ['Open LC'], 'Status']),
+        rows: SUPPLIERS.map(function (sp) {
+          const mine = lots.filter(function (l) { return l.c.sup === sp.id; });
+          const fob = mine.reduce(function (q, l) { return q + l.fobTotal; }, 0);
+          const open = mine.filter(function (l) { return !l.live; }).reduce(function (q, l) { return q + l.fobTotal; }, 0);
+          return row([C(sp.name, { b: true, sub: sp.id }), C(sp.port), C(sp.terms), C(String(mine.length), { n: true }), C(f(fob), { n: true }), C(open ? f(open) : '\u2014', { n: true }), C(open ? 'LC open' : 'Settled', { tag: open ? 'tag-accent-2' : 'tag-neutral' })]);
+        })
+      });
+    } else if (s === 'stock') {
+      const byItem = {};
+      live.forEach(function (l) { l.rows.forEach(function (r) {
+        const k = byItem[r.code] || (byItem[r.code] = { onHand: 0, value: 0, lots: 0, recd: 0 });
+        k.onHand += r.onHand; k.value += r.value; k.recd += r.qty; if (r.onHand > 0) k.lots++;
+      }); });
+      Object.assign(out, {
+        listKicker: 'Inventory \u00b7 Module 21', listTitle: 'Stock on hand', listBlurb: 'Item-level balances rolled up across container lots, valued at landed cost on the current allocation basis.',
+        cols: cols(['Item', 'Category', ['Received'], ['Sold'], ['On hand'], ['Avg unit cost'], ['Stock value'], 'Lots']),
+        rows: Object.keys(byItem).map(function (code) {
+          const k = byItem[code];
+          const it = self.item(code);
+          const low = k.onHand < 400;
+          return row([C(it.name, { b: true, sub: code + ' \u00b7 ' + it.uom }), C(it.cat), C(f(k.recd), { n: true }), C(f(k.recd - k.onHand), { n: true }), C(f(k.onHand), { n: true, b: true }), C(show ? f(k.value / (k.onHand || 1)) : '\u2014', { n: true }), C(show ? f(k.value) : '\u2014', { n: true }), C(low ? 'reorder' : String(k.lots) + ' lots', { tag: low ? 'tag-accent-2' : 'tag-outline' })]);
+        }),
+        hasTotals: true, totals: [{ label: 'Inventory value', value: f(b.stock) }, { label: 'Distinct items', value: String(Object.keys(byItem).length) }],
+        listNote: 'Costs move when the allocation basis changes on a container \u2014 open a lot to switch basis and watch this valuation follow.'
+      });
+    } else if (s === 'lotstock') {
+      const rows = [];
+      live.forEach(function (l) { l.rows.forEach(function (r) {
+        rows.push(row([C(l.c.id, { b: true, sub: l.c.recd }), C(self.item(r.code).name, { sub: r.code }), C(f(r.qty), { n: true }), C(f(r.sold), { n: true }), C(f(r.onHand), { n: true, b: true }), C(show ? f(r.unit) : '\u2014', { n: true }), C(show ? f(r.value) : '\u2014', { n: true }), C(self.pct(r.qty ? r.sold / r.qty : 0), { n: true })],
+          function () { self.go('container', { ctr: l.c.id }); }));
+      }); });
+      Object.assign(out, {
+        listKicker: 'Inventory \u00b7 Module 24', listTitle: 'Container-wise stock', listBlurb: 'The same physical item held at different landed costs in different lots \u2014 the reason stock is tracked lot by lot, not just by item.',
+        cols: cols(['Container', 'Item', ['Received'], ['Sold'], ['On hand'], ['Unit cost'], ['Stock value'], ['Sell-through']]), rows: rows,
+        hasTotals: true, totals: [{ label: 'Lot rows', value: String(rows.length) }, { label: 'Value on hand', value: f(b.stock) }]
+      });
+    } else if (s === 'items') {
+      Object.assign(out, {
+        listKicker: 'Masters \u00b7 Module 02', listTitle: 'Item master', listBlurb: 'Codes, units of measure, category and reorder levels. Prices are never held here \u2014 they come from the customer price list.',
+        cols: cols(['Code', 'Description', 'Category', 'UoM', ['Reorder level'], ['On hand'], 'Lots holding stock']),
+        rows: ITEMS.map(function (it) {
+          let onHand = 0; const ls = [];
+          live.forEach(function (l) { l.rows.forEach(function (r) { if (r.code === it.code && r.onHand > 0) { onHand += r.onHand; ls.push(l.c.id); } }); });
+          return row([C(it.code, { b: true }), C(it.name), C(it.cat), C(it.uom), C('400', { n: true }), C(f(onHand), { n: true }), C(ls.join(', ') || '\u2014')]);
+        })
+      });
+    } else if (s === 'sales') {
+      const fl = ['All', 'Al-Madina Hardware', 'Sindh Electric Traders', 'Gulf Tools & Machinery', 'Pak Plumbing Mart'];
+      Object.assign(out, {
+        listKicker: 'Sales \u00b7 Module 31', listTitle: 'Sales invoices', listBlurb: 'Each invoice issues stock from named container lots, so cost of goods and margin are exact rather than averaged.',
+        hasFilters: true,
+        filters: fl.map(function (x) { return { label: x, cls: self.state.filter === x ? 'btn-primary' : 'btn-secondary', go: function () { self.setState({ filter: x }); } }; }),
+        cols: cols(['Invoice', 'Customer', 'Lots issued', ['Net'], ['Sales tax'], ['Total'], ['Cost'], ['Gross profit'], 'Status']),
+        rows: this.state.invoices.slice().reverse().filter(function (i) {
+          const c = CUSTOMERS.find(function (x) { return x.id === i.cust; });
+          return self.state.filter === 'All' || c.name === self.state.filter;
+        }).map(function (i) {
+          const t = self.invTotals(i);
+          const c = CUSTOMERS.find(function (x) { return x.id === i.cust; });
+          const lotIds = i.lines.map(function (l) { return l[1]; }).filter(function (v, k, a) { return a.indexOf(v) === k; });
+          const paid = i.d === 0 ? 'Posted today' : i.d > 30 ? 'Overdue' : 'Open';
+          return row([C(i.no, { b: true, sub: i.date }), C(c.name, { sub: c.city + ' \u00b7 ' + c.terms }), C(lotIds.join(', '), { sub: i.lines.length + ' lines' }), C(f(t.net), { n: true }), C(f(t.tax), { n: true }), C(f(t.gross), { n: true, b: true }), C(show ? f(t.cogs) : '\u2014', { n: true }), C(show ? f(t.gp) + ' \u00b7 ' + self.pct(t.gp / t.net) : '\u2014', { n: true }), C(paid, { tag: paid === 'Overdue' ? 'tag-accent-2' : 'tag-accent' })]);
+        }),
+        hasTotals: true, totals: [{ label: 'Net sales', value: f(b.sales) }, { label: 'Cost of goods sold', value: f(b.cogs) }, { label: 'Gross profit', value: f(b.gp) + '  (' + this.pct(b.gp / b.sales) + ')' }],
+        listNote: 'Use \u201cNew invoice\u201d above to post one: pick a lot, set a rate, and watch the floor-price check, gross profit and ledger postings react.'
+      });
+    } else if (s === 'pricing') {
+      const rows = [];
+      ITEMS.forEach(function (it) {
+        let cost = 0, n = 0;
+        live.forEach(function (l) { l.rows.forEach(function (r) { if (r.code === it.code) { cost += r.unit; n++; } }); });
+        if (!n) return;
+        cost = cost / n;
+        rows.push(row([C(it.name, { b: true, sub: it.code }), C(show ? f(cost) : '\u2014', { n: true }), C(f(cost * 1.08), { n: true, sub: 'cost + 8%' }), C(f(Math.round(cost * 1.34 / 5) * 5), { n: true, b: true }),
+          C(f(Math.round(cost * 1.34 * 0.975 / 5) * 5), { n: true }), C(f(Math.round(cost * 1.34 * 0.95 / 5) * 5), { n: true }), C(f(Math.round(cost * 1.34 * 0.97 / 5) * 5), { n: true })]));
+      });
+      Object.assign(out, {
+        listKicker: 'Sales \u00b7 Module 28', listTitle: 'Customer price lists', listBlurb: 'List price per item with each customer tier\u2019s standing discount, and the approval floor below which only the owner can post.',
+        cols: cols(['Item', ['Avg landed cost'], ['Floor price'], ['List price'], ['Tier B \u22122.5%'], ['Tier C \u22125%'], ['Tier D \u22123%']]), rows: rows,
+        listNote: 'A sales officer pricing under the floor can only request approval; the owner can override at posting time.'
+      });
+    } else if (s === 'customers') {
+      Object.assign(out, {
+        listKicker: 'Masters \u00b7 Module 03', listTitle: 'Customers', listBlurb: 'Credit terms, limits, standing discount and the salesman who owns the account.',
+        cols: cols(['Customer', 'City', 'Terms', 'Salesman', ['Discount'], ['Credit limit'], ['Balance due'], ['Limit used']]),
+        rows: CUSTOMERS.map(function (c) {
+          const bal = self.custBal(c.id);
+          const used = bal / c.limit;
+          return row([C(c.name, { b: true, sub: c.id }), C(c.city), C(c.terms), C(c.salesman), C(c.disc + '%', { n: true }), C(f(c.limit), { n: true }), C(f(bal), { n: true, b: true }), C(self.pct(used), { tag: used > 0.85 ? 'tag-accent-2' : 'tag-neutral' })]);
+        }),
+        hasTotals: true, totals: [{ label: 'Total receivable', value: f(b.ar) }, { label: 'Credit extended', value: f(CUSTOMERS.reduce(function (q, c) { return q + c.limit; }, 0)) }]
+      });
+    } else if (s === 'receivables') {
+      const buck = [0, 0, 0, 0];
+      this.state.invoices.forEach(function (i) {
+        const g = self.invTotals(i).gross;
+        buck[i.d <= 15 ? 0 : i.d <= 30 ? 1 : i.d <= 45 ? 2 : 3] += g;
+      });
+      Object.assign(out, {
+        listKicker: 'Finance \u00b7 Module 44', listTitle: 'Receivables & aging', listBlurb: 'Balance per account with aging buckets, credit-limit headroom and one-click receipt entry.',
+        cols: cols(['Customer', 'Terms', ['Invoiced'], ['Received'], ['Balance'], ['Oldest'], ['Headroom'], 'Action']),
+        rows: CUSTOMERS.map(function (c) {
+          let inv = 0, oldest = 0;
+          self.state.invoices.forEach(function (i) { if (i.cust === c.id) { inv += self.invTotals(i).gross; oldest = Math.max(oldest, i.d); } });
+          const recd = self.state.receipts.filter(function (r) { return r.cust === c.id; }).reduce(function (q, r) { return q + r.amt; }, 0);
+          const bal = inv - recd;
+          return row([C(c.name, { b: true, sub: c.city }), C(c.terms), C(f(inv), { n: true }), C(f(recd), { n: true }), C(f(bal), { n: true, b: true }), C(oldest ? oldest + ' days' : '\u2014', { n: true }), C(f(c.limit - bal), { n: true }), C('', { action: function () { self.receive(c.id); }, actionLabel: 'Receive 60%' })]);
+        }),
+        hasTotals: true,
+        totals: [{ label: '0\u201315 days', value: f(buck[0]) }, { label: '16\u201330 days', value: f(buck[1]) }, { label: '31\u201345 days', value: f(buck[2]) }, { label: '46+ days', value: f(buck[3]) }, { label: 'Total due', value: f(b.ar) }],
+        listNote: 'Receipts post to bank and clear the receivable in the same batch; the aging buckets above rebuild immediately.'
+      });
+    } else if (s === 'receipts') {
+      Object.assign(out, {
+        listKicker: 'Finance \u00b7 Module 47', listTitle: 'Receipts', listBlurb: 'Cash and cheque receipts, applied oldest-invoice-first against each account.',
+        cols: cols(['Voucher', 'Date', 'Customer', 'Mode', ['Amount'], 'Applied to', 'Status']),
+        rows: this.state.receipts.slice().reverse().map(function (r) {
+          const c = CUSTOMERS.find(function (x) { return x.id === r.cust; });
+          return row([C(r.no, { b: true }), C(r.date), C(c.name), C(r.mode), C(f(r.amt), { n: true, b: true }), C('FIFO against open invoices'), C(r.mode.indexOf('Cheque') === 0 ? 'Cleared' : 'Realised', { tag: 'tag-accent' })]);
+        }),
+        hasTotals: true, totals: [{ label: 'Received YTD', value: f(b.recd) }, { label: 'Still outstanding', value: f(b.ar) }]
+      });
+    } else if (s === 'gl' || s === 'tb') {
+      const acc = [
+        ['1100', 'Bank \u2014 Meezan current', b.recd, 0],
+        ['1200', 'Trade receivables', b.gross, b.recd],
+        ['1300', 'Inventory \u2014 container lots', b.stock + b.cogs, b.cogs],
+        ['1310', 'Goods in transit', b.inTransit, 0],
+        ['1400', 'Sales tax input (import)', b.tax * 0.64, 0],
+        ['2100', 'Trade payables \u2014 suppliers', 0, b.stock * 0.35],
+        ['2200', 'Sales tax output', 0, b.tax],
+        ['3100', 'Owner capital & retained', 0, b.stock * 0.9 + b.inTransit * 0.6],
+        ['4100', 'Sales revenue', 0, b.sales],
+        ['5100', 'Cost of goods sold', b.cogs, 0],
+        ['5200', 'Import & clearing expenses', 0, 0],
+        ['6100', 'Operating expenses', b.sales * 0.07, 0]
+      ];
+      const dr = acc.reduce(function (q, a) { return q + a[2]; }, 0);
+      const cr = acc.reduce(function (q, a) { return q + a[3]; }, 0);
+      if (s === 'tb') {
+        Object.assign(out, {
+          listKicker: 'Accounting \u00b7 Module 58', listTitle: 'Trial balance', listBlurb: 'As at 14 September 2026. Every stock, sales and receipt document above posted here automatically \u2014 no separate accounting entry.',
+          cols: cols(['Code', 'Account', ['Debit'], ['Credit'], ['Net']]),
+          rows: acc.map(function (a) { return row([C(a[0], { b: true }), C(a[1]), C(a[2] ? f(a[2]) : '\u2014', { n: true }), C(a[3] ? f(a[3]) : '\u2014', { n: true }), C(f(a[2] - a[3]), { n: true })]); }),
+          hasTotals: true, totals: [{ label: 'Total debits', value: f(dr) }, { label: 'Total credits', value: f(cr) }, { label: 'Difference', value: f(Math.abs(dr - cr)) + ' (suspense)' }],
+          listNote: 'Suspense holds the opening-balance difference in this prototype; a live system would carry forward last year\u2019s closing balances.'
+        });
+      } else {
+        const je = [];
+        this.state.invoices.slice().reverse().forEach(function (i) {
+          const t = self.invTotals(i);
+          const c = CUSTOMERS.find(function (x) { return x.id === i.cust; });
+          je.push(['JV-S-' + i.no.slice(4), i.date, 'Sales invoice ' + i.no + ' \u2014 ' + c.name, '1200 Trade receivables', t.gross, 0]);
+          je.push(['', '', '', '4100 Sales revenue', 0, t.net]);
+          je.push(['', '', '', '2200 Sales tax output', 0, t.tax]);
+          je.push(['', '', '', '5100 Cost of goods sold', t.cogs, 0]);
+          je.push(['', '', '', '1300 Inventory \u2014 lot issue', 0, t.cogs]);
+        });
+        this.state.receipts.slice().reverse().forEach(function (r) {
+          const c = CUSTOMERS.find(function (x) { return x.id === r.cust; });
+          je.push(['JV-R-' + r.no.slice(3), r.date, 'Receipt ' + r.no + ' \u2014 ' + c.name, '1100 Bank \u2014 Meezan', r.amt, 0]);
+          je.push(['', '', '', '1200 Trade receivables', 0, r.amt]);
+        });
+        Object.assign(out, {
+          listKicker: 'Accounting \u00b7 Module 55', listTitle: 'General ledger', listBlurb: 'The double-entry batch written by each document. Nothing here is keyed by hand.',
+          cols: cols(['Voucher', 'Date', 'Narration', 'Account', ['Debit'], ['Credit']]),
+          rows: je.slice(0, 42).map(function (j) { return row([C(j[0], { b: !!j[0] }), C(j[1]), C(j[2]), C(j[3]), C(j[4] ? f(j[4]) : '', { n: true }), C(j[5] ? f(j[5]) : '', { n: true })]); }),
+          hasTotals: true, totals: [{ label: 'Vouchers', value: String(this.state.invoices.length + this.state.receipts.length) }, { label: 'Debits posted', value: f(b.gross + b.cogs + b.recd) }],
+          listNote: 'Post a new invoice or record a receipt and its voucher appears at the top of this ledger.'
+        });
+      }
+    } else if (s === 'profit') {
+      Object.assign(out, {
+        listKicker: 'Finance \u00b7 Module 51', listTitle: 'Container profitability', listBlurb: 'Realised profit on what has sold, plus the profit still sitting in unsold stock at list price.',
+        cols: cols(['Container', ['Landed cost'], ['Revenue'], ['COGS'], ['Realised GP'], ['Margin'], ['Unsold at cost'], ['Sell-through']]),
+        rows: lots.map(function (l) {
+          let rev = 0, cogs = 0;
+          self.state.invoices.forEach(function (i) { i.lines.forEach(function (x) { if (x[1] === l.c.id) { rev += x[2] * x[3]; cogs += x[2] * self.unitCost(l.c.id, x[0]); } }); });
+          const stock = l.rows.reduce(function (q, r) { return q + r.value; }, 0);
+          return row([C(l.c.id, { b: true, sub: l.c.status }), C(f(l.landed), { n: true }), C(rev ? f(rev) : '\u2014', { n: true }), C(cogs ? f(cogs) : '\u2014', { n: true }), C(rev ? f(rev - cogs) : '\u2014', { n: true, b: true }), C(rev ? self.pct((rev - cogs) / rev) : '\u2014', { n: true }), C(l.live ? f(stock) : 'in transit', { n: true }), C(l.live ? self.pct(1 - stock / l.landed) : '\u2014', { n: true })],
+            function () { self.go('container', { ctr: l.c.id }); });
+        }),
+        hasTotals: true, totals: [{ label: 'Realised gross profit', value: f(b.gp) }, { label: 'Blended margin', value: this.pct(b.gp / b.sales) }, { label: 'Stock still to sell', value: f(b.stock) }]
+      });
+    } else if (s === 'roles') {
+      const R = [
+        ['Owner', 'Everything, including overrides', 'Yes', 'Yes', 'Yes', 'Yes'],
+        ['Accountant', 'Costing, ledger, receipts, reports', 'Yes', 'No', 'Yes', 'Yes'],
+        ['Sales officer', 'Invoices at or above floor price', 'No', 'No', 'No', 'Own customers'],
+        ['Store keeper', 'Receipts of goods, put-away, counts', 'No', 'No', 'No', 'No'],
+        ['Import desk', 'Containers, documents, clearing costs', 'Yes', 'No', 'No', 'No'],
+        ['Auditor (read only)', 'Views everything, changes nothing', 'No', 'No', 'No', 'Yes']
+      ];
+      Object.assign(out, {
+        listKicker: 'Administration \u00b7 Module 71', listTitle: 'Roles & approvals', listBlurb: 'Who may see cost, who may price below the floor, and what needs the owner\u2019s release. Switch role in the header to feel the difference.',
+        cols: cols(['Role', 'Scope', 'Sees unit cost', 'Below-floor pricing', 'Posts to ledger', 'Reports']),
+        rows: R.map(function (r) {
+          return row([C(r[0], { b: true, sub: r[0] === self.state.role ? 'current session' : '' }), C(r[1]), C(r[2], { tag: r[2] === 'Yes' ? 'tag-accent' : 'tag-neutral' }), C(r[3], { tag: r[3] === 'Yes' ? 'tag-accent-2' : 'tag-neutral' }), C(r[4], { tag: r[4] === 'Yes' ? 'tag-accent' : 'tag-neutral' }), C(r[5])]);
+        }),
+        listNote: 'Approval queue: below-floor prices, over-limit credit, cost edits after posting, and any backdated document all route to the owner with the requester, reason and full before/after values kept in the audit trail.'
+      });
+    }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

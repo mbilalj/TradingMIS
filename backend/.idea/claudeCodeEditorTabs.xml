@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ClaudeCodeEditorTabs">
+    <option name="activeSessionId" value="1ddd73f8-e227-40d4-861a-af6a93dd0337" />
+    <option name="openSessionIds">
+      <list>
+        <option value="245d07b9-e6b9-4ff0-be38-5dac1daa6b35" />
+        <option value="1ddd73f8-e227-40d4-861a-af6a93dd0337" />
+      </list>
+    </option>
+    <option name="sessionPaths">
+      <map>
+        <entry key="1ddd73f8-e227-40d4-861a-af6a93dd0337" value="/sessions/0fcd12f4-1c6b-4364-949c-461282c37550" />
+        <entry key="245d07b9-e6b9-4ff0-be38-5dac1daa6b35" value="/" />
+      </map>
+    </option>
+    <option name="sessionTitles">
+      <map>
+        <entry key="1ddd73f8-e227-40d4-861a-af6a93dd0337" value="error when calling this api.. fix and tell reason" />
+        <entry key="245d07b9-e6b9-4ff0-be38-5dac1daa6b35" value="Claude Code" />
+      </map>
+    </option>
+  </component>
+</project>

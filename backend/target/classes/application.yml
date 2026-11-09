@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: trading-mis
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:portsidedb}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=false
+    username: ${DB_USER:portside_app}
+    password: ${DB_PASSWORD:portside_app}
+  jpa:
+    hibernate:
+      # Creates/extends the mis_* tables on startup. Never drops anything, so legacy tables are left untouched.
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 20MB
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+portside:
+  # Loads demo Lahore importer data once (marker setting sample.data.v1). Set SAMPLE_DATA=false to skip.
+  sample-data:
+    enabled: ${SAMPLE_DATA:true}
+  attachments-dir: ${ATTACHMENTS_DIR:attachments}
+  jwt:
+    secret: ${JWT_SECRET:dev-only-change-me-in-prod-please-this-needs-32-bytes-min}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:480}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:8080}
+
+logging:
+  level:
+    com.portside.trading: INFO
+    org.hibernate.SQL: WARN
